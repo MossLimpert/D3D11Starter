@@ -17,6 +17,11 @@
 // For the DirectX Math library
 using namespace DirectX;
 
+//
+// FIELDS
+//
+XMFLOAT4 _color(0.0f, 1.0f, 0.0f, 1.0f);
+
 // --------------------------------------------------------
 // Called once per program, after the window and graphics API
 // are initialized but before the game loop begins
@@ -263,7 +268,76 @@ void Game::GuiUpdate(float deltaTime)
 	Input::SetMouseCapture(io.WantCaptureMouse);
 
 	// show demo
-	ImGui::ShowDemoWindow();
+	//ImGui::ShowDemoWindow();
+
+}
+
+void Game::BuildGui()
+{
+	// vars
+	//XMFLOAT4 color(0.0f, 1.0f, 0.0f, 1.0f);
+
+	ImGui::Begin("Moss Limpert's D3D11 Homework");	// custom window
+
+	ImGui::Text("Framerate: %f fps", ImGui::GetIO().Framerate);	// current framerate
+	ImGui::Text("Window Resolution: %dx%d", Window::Width(), Window::Height());	// window dimenstions
+
+	ImGui::ColorEdit4("RGBA Color Editor", &_color.x);
+
+	if (ImGui::Button("Show Demo Window")) {
+		ImGui::ShowDemoWindow();
+	}
+
+	if (ImGui::TreeNode("Assignment 2 Extras")) {
+		if (ImGui::TreeNode("Basic Tree")) {
+			for (int i = 0; i < 5; i++) {
+				if (i == 0) ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+
+				if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i)) {
+					ImGui::Text("This is child node number %d", i);
+					ImGui::TreePop();
+				}
+			}
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("List box")) {
+			const char* items[] = { "dog", "cat", "snake", "lizard", "salamander", "rabbit" };
+			static int item_current_idx = 0;
+			if (ImGui::BeginListBox("animals")) {
+				for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+					const bool is_selected = (item_current_idx == n);
+					if (ImGui::Selectable(items[n], is_selected)); item_current_idx = n;
+
+					// set focus
+					if (is_selected) ImGui::SetItemDefaultFocus();
+				}
+				ImGui::EndListBox();
+			}
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Table")) {
+			if (ImGui::BeginTable("Example Table", 3)) {
+				for (int row = 0; row < 4; row++) {
+					ImGui::TableNextRow();
+					for (int column = 0; column < 3; column++) {
+						ImGui::TableSetColumnIndex(column);
+						ImGui::Text("Row %d Column %d", row, column);
+					}
+				}
+				ImGui::EndTable();
+			}
+			ImGui::TreePop();
+		}
+
+		ImGui::TreePop();
+	}
+
+	
+
+
+	ImGui::End();
 }
 
 
@@ -283,6 +357,7 @@ void Game::Update(float deltaTime, float totalTime)
 {
 	// update imgui info 
 	GuiUpdate(deltaTime);
+	BuildGui();
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
 		Window::Quit();
@@ -300,7 +375,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - At the beginning of Game::Draw() before drawing *anything*
 	{
 		// Clear the back buffer (erase what's on screen) and depth buffer
-		const float color[4] = { 0.4f, 0.6f, 0.75f, 0.0f };
+		float color[4] = { _color.x, _color.y, _color.z, _color.w };
 		Graphics::Context->ClearRenderTargetView(Graphics::BackBufferRTV.Get(),	color);
 		Graphics::Context->ClearDepthStencilView(Graphics::DepthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	}
