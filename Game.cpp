@@ -4,6 +4,9 @@
 #include "Input.h"
 #include "PathHelpers.h"
 #include "Window.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_dx11.h"
+#include "imgui/imgui_impl_win32.h"
 
 #include <DirectXMath.h>
 
@@ -20,6 +23,17 @@ using namespace DirectX;
 // --------------------------------------------------------
 void Game::Initialize()
 {
+
+	// IMGUI
+	// 
+	// initialize itself, platform, and renderer backend
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGui_ImplWin32_Init(Window::Handle());
+	ImGui_ImplDX11_Init(Graphics::Device.Get(), Graphics::Context.Get());
+	ImGui::StyleColorsDark();
+
+
 	// Helper methods for loading shaders, creating some basic
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
@@ -58,7 +72,10 @@ void Game::Initialize()
 // --------------------------------------------------------
 Game::~Game()
 {
-
+	// imgui cleanup
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 
@@ -225,6 +242,30 @@ void Game::CreateGeometry()
 	}
 }
 
+/// <summary>
+/// Updates ImGUI
+/// </summary>
+void Game::GuiUpdate(float deltaTime)
+{
+	// give imgui data
+	ImGuiIO& io = ImGui::GetIO();
+	io.DeltaTime = deltaTime;
+	io.DisplaySize.x = (float)Window::Width();
+	io.DisplaySize.y = (float)Window::Height();
+
+	// reset frame
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	// input capture
+	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
+	Input::SetMouseCapture(io.WantCaptureMouse);
+
+	// show demo
+	ImGui::ShowDemoWindow();
+}
+
 
 // --------------------------------------------------------
 // Handle resizing to match the new window size
@@ -240,10 +281,13 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
+	// update imgui info 
+	GuiUpdate(deltaTime);
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
 		Window::Quit();
 }
+
 
 
 // --------------------------------------------------------
@@ -286,6 +330,15 @@ void Game::Draw(float deltaTime, float totalTime)
 			0,     // Offset to the first index we want to use
 			0);    // Offset to add to each index when looking up vertices
 	}
+
+	//
+	// IMGUI
+	//
+	{
+		ImGui::Render();
+		ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	}
+
 
 	// Frame END
 	// - These should happen exactly ONCE PER FRAME

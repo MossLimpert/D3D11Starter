@@ -7,7 +7,7 @@
 #include <sstream>
 
 // Includes imgui's win32 backend, and forward declares the window hander func
-extern IMGUI_IMPL_API LRESULT Imgui_ImplWin32_WndProcHandler(
+extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(
 	HWND hWnd,
 	UINT msg,
 	WPARAM wParam,
@@ -263,7 +263,7 @@ void Window::CreateConsoleWindow(int bufferLines, int bufferColumns, int windowL
 LRESULT Window::ProcessMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// call imgui's message handler, exiting if necessary
-	if (Imgui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) {
+	if (ImGui_ImplWin32_WndProcHandler(hWnd, uMsg, wParam, lParam)) {
 		return true;
 	}
 	// Check the incoming message and handle any we care about
