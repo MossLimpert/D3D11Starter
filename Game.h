@@ -2,6 +2,10 @@
 
 #include <d3d11.h>
 #include <wrl/client.h>
+#include <vector>
+#include <memory>
+
+#include "Mesh.h"
 
 class Game
 {
@@ -31,9 +35,9 @@ private:
 	//     Component Object Model, which DirectX objects do
 	//  - More info here: https://github.com/Microsoft/DirectXTK/wiki/ComPtr
 
-	// Buffers to hold actual geometry data
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vertexBuffer;
-	Microsoft::WRL::ComPtr<ID3D11Buffer> indexBuffer;
+	
+	// list of meshes
+	std::vector<std::shared_ptr<Mesh>> meshes;
 
 	// Shaders and shader-related constructs
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;

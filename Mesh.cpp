@@ -78,6 +78,7 @@ void Mesh::CreateBuffers(Vertex* vertArray, size_t numVerts, unsigned int* index
 		ibd.Usage = D3D11_USAGE_IMMUTABLE;
 		ibd.ByteWidth = sizeof(unsigned int) * (UINT)numIndices; // are unsigned int and UINT different???????? 
 		ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		ibd.CPUAccessFlags = 0;
 		ibd.MiscFlags = 0;
 		ibd.StructureByteStride = 0;
 
