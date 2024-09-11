@@ -199,15 +199,32 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), green },
 	};
 	Vertex heartVerts[] = {
-		{ XMFLOAT3(-0.6f, 0.4f, 0.0f),},
-		{ XMFLOAT3(-0.8f, 0.8f, 0.0f),},
-		{ XMFLOAT3(-0.75f, 0.9f, 0.0f),},
-		{ XMFLOAT3(-0.65f, 0.9f, 0.0f),},
-		{ XMFLOAT3(-0.6f, 0.85f, 0.0f),},
-		{ XMFLOAT3(-0.55f, 0.9f, 0.0f),},
-		{ XMFLOAT3(-0.45f, 0.9f, 0.0f),},
-		{ XMFLOAT3(-0.4f, 0.8f, 0.0f),}
+		{ XMFLOAT3(-0.6f, 0.4f, 0.0f), red},
+		{ XMFLOAT3(-0.8f, 0.8f, 0.0f), red},
+		{ XMFLOAT3(-0.75f, 0.9f, 0.0f), red},
+		{ XMFLOAT3(-0.65f, 0.9f, 0.0f), red},
+		{ XMFLOAT3(-0.6f, 0.85f, 0.0f), green},
+		{ XMFLOAT3(-0.55f, 0.9f, 0.0f), green},
+		{ XMFLOAT3(-0.45f, 0.9f, 0.0f), green},
+		{ XMFLOAT3(-0.4f, 0.8f, 0.0f), green}
 	};
+	Vertex bunnyVerts[] = {
+		{ XMFLOAT3(0.2f, 0.5f, 0.0f), blue},
+		{ XMFLOAT3(0.25f, 0.7f,0.0f), blue},
+		{ XMFLOAT3(0.2f, 0.8f, 0.0f), blue},
+		{ XMFLOAT3(0.25f, 0.85f,0.0f), blue},
+		{ XMFLOAT3(0.3f, 0.85f, 0.0f), blue},
+		{ XMFLOAT3(0.35f, 0.95f, 0.0f), blue},
+		{ XMFLOAT3(0.45f, 1.0f, 0.0f), blue},
+		{ XMFLOAT3(0.45f, 0.9f, 0.0f), blue},
+		{ XMFLOAT3(0.35f, 0.8f, 0.0f), blue},
+		{ XMFLOAT3(0.35f, 0.725f, 0.0f), blue},
+		{ XMFLOAT3(0.4f, 0.75f, 0.0f), blue},
+		{ XMFLOAT3(0.6f, 0.75f, 0.0f), blue},
+		{ XMFLOAT3(0.7f, 0.7f, 0.0f), blue},
+		{ XMFLOAT3(0.65f, 0.65f, 0.0f), blue},
+		{ XMFLOAT3(0.75f, 0.5f, 0.0f), blue},
+	}
 
 
 	// Set up indices, which tell us which vertices to use and in which order
