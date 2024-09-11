@@ -17,6 +17,20 @@
 // For the DirectX Math library
 using namespace DirectX;
 
+
+// TODO
+// Create a Mesh class to hold geometry data (vertices & indices) in Direct3D buffers
+// Create three Mesh objects, with different geometry, in the Game class
+// Draw the meshes to the screen
+// Remove code that is now redundant or unused in Game.h and Game.cpp
+// Add mesh - related elements to your UI
+// General Requirements
+// Ensure you have no D3D warnings or errors(check the Visual Studio output window)
+// Clean up all C++ memory leaks(mostly unnecessary if using smart pointers correctly)
+// Properly release your D3D resources(mostly unnecessary if using ComPtrs correctly)
+// Clean up any and all warnings in your code(seriously, don’t submit code with warnings
+//
+
 //
 // FIELDS
 //
