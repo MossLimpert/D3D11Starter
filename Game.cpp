@@ -7,6 +7,7 @@
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
+#include "Mesh.h"
 
 #include <DirectXMath.h>
 
@@ -224,7 +225,7 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(0.7f, 0.7f, 0.0f), blue},
 		{ XMFLOAT3(0.65f, 0.65f, 0.0f), blue},
 		{ XMFLOAT3(0.75f, 0.5f, 0.0f), blue},
-	}
+	};
 
 
 	// Set up indices, which tell us which vertices to use and in which order
@@ -382,8 +383,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
 	{
-		triangle.Draw();
-		heart.Draw();
+		//triangle.Draw();
+		//heart.Draw();
 	}
 
 	//
