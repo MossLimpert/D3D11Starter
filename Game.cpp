@@ -36,6 +36,7 @@ using namespace DirectX;
 // FIELDS
 //
 XMFLOAT4 _color(0.0f, 1.0f, 0.0f, 1.0f);
+static bool demoActive;
 
 // --------------------------------------------------------
 // Called once per program, after the window and graphics API
@@ -43,6 +44,10 @@ XMFLOAT4 _color(0.0f, 1.0f, 0.0f, 1.0f);
 // --------------------------------------------------------
 void Game::Initialize()
 {
+	// init fields
+	// 
+	demoActive = false;
+
 
 	// IMGUI
 	// 
@@ -92,6 +97,7 @@ void Game::Initialize()
 // --------------------------------------------------------
 Game::~Game()
 {
+	
 	// imgui cleanup
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();
@@ -180,6 +186,7 @@ void Game::CreateGeometry()
 	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	XMFLOAT4 periwinkle = XMFLOAT4(0.68f, 0.4f, 1.0f, 1.0f);
 
 	// Set up the vertices of the triangle we would like to draw
 	// - We're going to copy this array, exactly as it exists in CPU memory
@@ -200,25 +207,25 @@ void Game::CreateGeometry()
 		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), green },
 	};
 	Vertex heartVerts[] = {
-		{ XMFLOAT3(-0.6f, 0.4f, 0.0f), red},
+		{ XMFLOAT3(-0.6f, 0.4f, 0.0f), blue},
 		{ XMFLOAT3(-0.8f, 0.8f, 0.0f), red},
 		{ XMFLOAT3(-0.75f, 0.9f, 0.0f), red},
 		{ XMFLOAT3(-0.65f, 0.9f, 0.0f), red},
-		{ XMFLOAT3(-0.6f, 0.85f, 0.0f), green},
-		{ XMFLOAT3(-0.55f, 0.9f, 0.0f), green},
-		{ XMFLOAT3(-0.45f, 0.9f, 0.0f), green},
-		{ XMFLOAT3(-0.4f, 0.8f, 0.0f), green}
+		{ XMFLOAT3(-0.6f, 0.85f, 0.0f), periwinkle},
+		{ XMFLOAT3(-0.55f, 0.9f, 0.0f), periwinkle},
+		{ XMFLOAT3(-0.45f, 0.9f, 0.0f), periwinkle},
+		{ XMFLOAT3(-0.4f, 0.8f, 0.0f), periwinkle}
 	};
 	Vertex bunnyVerts[] = {
 		{ XMFLOAT3(0.2f, 0.5f, 0.0f), blue},
 		{ XMFLOAT3(0.25f, 0.7f,0.0f), blue},
 		{ XMFLOAT3(0.2f, 0.8f, 0.0f), blue},
 		{ XMFLOAT3(0.25f, 0.85f,0.0f), blue},
-		{ XMFLOAT3(0.3f, 0.85f, 0.0f), blue},
-		{ XMFLOAT3(0.35f, 0.95f, 0.0f), blue},
-		{ XMFLOAT3(0.45f, 1.0f, 0.0f), blue},
-		{ XMFLOAT3(0.45f, 0.9f, 0.0f), blue},
-		{ XMFLOAT3(0.35f, 0.8f, 0.0f), blue},
+		{ XMFLOAT3(0.3f, 0.85f, 0.0f), periwinkle},
+		{ XMFLOAT3(0.35f, 0.95f, 0.0f), periwinkle},
+		{ XMFLOAT3(0.45f, 1.0f, 0.0f), periwinkle},
+		{ XMFLOAT3(0.45f, 0.9f, 0.0f), periwinkle},
+		{ XMFLOAT3(0.35f, 0.8f, 0.0f), periwinkle},
 		{ XMFLOAT3(0.35f, 0.725f, 0.0f), blue},
 		{ XMFLOAT3(0.4f, 0.75f, 0.0f), blue},
 		{ XMFLOAT3(0.6f, 0.75f, 0.0f), blue},
@@ -235,14 +242,16 @@ void Game::CreateGeometry()
 	// - But just to see how it's done...
 	unsigned int indices[] = { 0, 1, 2 };
 	unsigned int heartIndices[] = { 0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7 };
-
+	unsigned int bunnyIndices[] = { 0,1,9,9,1,2,9,2,3,9,3,4,9,4,8,8,4,5,8,5,6,8,6,7,0,9,10,0,10,11,0,11,12,0,12,13,0,13,14 };
 	// use mesh class!
 	// 
 	std::shared_ptr<Mesh> triangle = std::make_shared<Mesh>("triangle", vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices));
 	std::shared_ptr<Mesh> heart = std::make_shared<Mesh>("heart", heartVerts, ARRAYSIZE(heartVerts), heartIndices, ARRAYSIZE(heartIndices));
+	std::shared_ptr<Mesh> bnuy = std::make_shared<Mesh>("bunny", bunnyVerts, ARRAYSIZE(bunnyVerts), bunnyIndices, ARRAYSIZE(bunnyIndices));
 
 	meshes.push_back(triangle);
 	meshes.push_back(heart);
+	meshes.push_back(bnuy);
 
 }
 
@@ -283,55 +292,66 @@ void Game::BuildGui()
 
 	ImGui::ColorEdit4("RGBA Color Editor", &_color.x);
 
-	if (ImGui::Button("Show Demo Window")) {
-		ImGui::ShowDemoWindow();
-	}
+	
+	if (ImGui::Checkbox("Show Demo Window", &demoActive))
+	if (demoActive) ImGui::ShowDemoWindow();
 
-	if (ImGui::TreeNode("Assignment 2 Extras")) {
-		if (ImGui::TreeNode("Basic Tree")) {
-			for (int i = 0; i < 5; i++) {
-				if (i == 0) ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-
-				if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i)) {
-					ImGui::Text("This is child node number %d", i);
-					ImGui::TreePop();
-				}
-			}
-			ImGui::TreePop();
+	if (ImGui::TreeNode("Mesh Information")) {
+		for (auto& m : meshes) {
+			ImGui::Text("Name: %s", m->GetName()); 
+			ImGui::Text("Tris: %d | ", m->GetIndexCount() / 3); ImGui::SameLine();
+			ImGui::Text("Verts: %d | ", m->GetVertexCount()); ImGui::SameLine();
+			ImGui::Text("Indices: %d", m->GetIndexCount());
 		}
-
-		if (ImGui::TreeNode("List box")) {
-			const char* items[] = { "dog", "cat", "snake", "lizard", "salamander", "rabbit" };
-			static int item_current_idx = 0;
-			if (ImGui::BeginListBox("animals")) {
-				for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-					const bool is_selected = (item_current_idx == n);
-					if (ImGui::Selectable(items[n], is_selected)) item_current_idx = n;
-
-					// set focus
-					if (is_selected) ImGui::SetItemDefaultFocus();
-				}
-				ImGui::EndListBox();
-			}
-			ImGui::TreePop();
-		}
-
-		if (ImGui::TreeNode("Table")) {
-			if (ImGui::BeginTable("Example Table", 3)) {
-				for (int row = 0; row < 4; row++) {
-					ImGui::TableNextRow();
-					for (int column = 0; column < 3; column++) {
-						ImGui::TableSetColumnIndex(column);
-						ImGui::Text("Row %d Column %d", row, column);
-					}
-				}
-				ImGui::EndTable();
-			}
-			ImGui::TreePop();
-		}
-
 		ImGui::TreePop();
 	}
+	
+
+	//if (ImGui::TreeNode("Assignment 2 Extras")) {
+	//	if (ImGui::TreeNode("Basic Tree")) {
+	//		for (int i = 0; i < 5; i++) {
+	//			if (i == 0) ImGui::SetNextItemOpen(true, ImGuiCond_Once);
+
+	//			if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i)) {
+	//				ImGui::Text("This is child node number %d", i);
+	//				ImGui::TreePop();
+	//			}
+	//		}
+	//		ImGui::TreePop();
+	//	}
+
+	//	if (ImGui::TreeNode("List box")) {
+	//		const char* items[] = { "dog", "cat", "snake", "lizard", "salamander", "rabbit" };
+	//		static int item_current_idx = 0;
+	//		if (ImGui::BeginListBox("animals")) {
+	//			for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
+	//				const bool is_selected = (item_current_idx == n);
+	//				if (ImGui::Selectable(items[n], is_selected)) item_current_idx = n;
+
+	//				// set focus
+	//				if (is_selected) ImGui::SetItemDefaultFocus();
+	//			}
+	//			ImGui::EndListBox();
+	//		}
+	//		ImGui::TreePop();
+	//	}
+
+	//	if (ImGui::TreeNode("Table")) {
+	//		if (ImGui::BeginTable("Example Table", 3)) {
+	//			for (int row = 0; row < 4; row++) {
+	//				ImGui::TableNextRow();
+	//				for (int column = 0; column < 3; column++) {
+	//					ImGui::TableSetColumnIndex(column);
+	//					ImGui::Text("Row %d Column %d", row, column);
+	//				}
+	//			}
+	//			ImGui::EndTable();
+	//		}
+	//		ImGui::TreePop();
+	//	}
+
+	//	ImGui::TreePop();
+	//}
 
 	
 
@@ -383,8 +403,11 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
 	{
-		//triangle.Draw();
-		//heart.Draw();
+		//printf("%i", meshes.size());
+		//for (int i = meshes.size() - 1; i > 0; i--) {
+		for (auto& m : meshes) {
+			m->Draw();
+		}
 	}
 
 	//
