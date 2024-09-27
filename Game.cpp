@@ -8,6 +8,7 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "Mesh.h"
+#include "BufferStructs.h" // Assignment 4
 
 #include <DirectXMath.h>
 
@@ -19,23 +20,12 @@
 using namespace DirectX;
 
 
-// TODO
-// Create a Mesh class to hold geometry data (vertices & indices) in Direct3D buffers --- done
-// Create three Mesh objects, with different geometry, in the Game class
-// Draw the meshes to the screen
-// Remove code that is now redundant or unused in Game.h and Game.cpp
-// Add mesh - related elements to your UI
-// General Requirements
-// Ensure you have no D3D warnings or errors(check the Visual Studio output window)
-// Clean up all C++ memory leaks(mostly unnecessary if using smart pointers correctly)
-// Properly release your D3D resources(mostly unnecessary if using ComPtrs correctly)
-// Clean up any and all warnings in your code(seriously, don’t submit code with warnings
-//
-
 //
 // FIELDS
 //
 XMFLOAT4 _color(0.0f, 1.0f, 0.0f, 1.0f);
+XMFLOAT4 _colorTint(1.0f, 1.0f, 1.0f, 1.0f);
+XMFLOAT3 _offset(0.0f, 0.0f, 0.0f);
 static bool demoActive;
 
 // --------------------------------------------------------
@@ -86,6 +76,23 @@ void Game::Initialize()
 		Graphics::Context->VSSetShader(vertexShader.Get(), 0, 0);
 		Graphics::Context->PSSetShader(pixelShader.Get(), 0, 0);
 	}
+
+	// Set up Constant Buffers
+	//
+	{
+		D3D11_BUFFER_DESC cbDesc = {};
+		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		cbDesc.ByteWidth = (sizeof(VertexShaderData) + 15) / 16 * 16;
+		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
+
+		// 4 bind constant buffer for drawing
+		Graphics::Context->VSSetConstantBuffers(0, 1, vsConstBuff.GetAddressOf());
+	}
+
+	
 }
 
 
@@ -293,8 +300,11 @@ void Game::BuildGui()
 	ImGui::ColorEdit4("RGBA Color Editor", &_color.x);
 
 	
-	if (ImGui::Checkbox("Show Demo Window", &demoActive))
-	if (demoActive) ImGui::ShowDemoWindow();
+	//if (ImGui::Checkbox("Show Demo Window", &demoActive))
+	//if (demoActive) ImGui::ShowDemoWindow();
+
+	ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
+	ImGui::ColorEdit4("Color Tint: ", &_colorTint.x);
 
 	if (ImGui::TreeNode("Mesh Information")) {
 		for (auto& m : meshes) {
@@ -374,6 +384,7 @@ void Game::OnResize()
 // --------------------------------------------------------
 void Game::Update(float deltaTime, float totalTime)
 {
+	
 	// update imgui info 
 	GuiUpdate(deltaTime);
 	BuildGui();
@@ -397,6 +408,30 @@ void Game::Draw(float deltaTime, float totalTime)
 		float color[4] = { _color.x, _color.y, _color.z, _color.w };
 		Graphics::Context->ClearRenderTargetView(Graphics::BackBufferRTV.Get(),	color);
 		Graphics::Context->ClearDepthStencilView(Graphics::DepthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+		// update constant buffers
+		{
+			// Assignment 4 constant buffer collect data
+			VertexShaderData vsData;
+			vsData.colorTint = _colorTint;
+			vsData.offset = _offset;
+
+			// Assingment 4 constant buffer map
+			D3D11_MAPPED_SUBRESOURCE mappedBuff = {};
+			Graphics::Context->Map(
+				vsConstBuff.Get(),
+				0,
+				D3D11_MAP_WRITE_DISCARD,
+				0,
+				&mappedBuff
+			);
+
+			// 4 memcpy
+			memcpy(mappedBuff.pData, &vsData, sizeof(vsData));
+
+			// 4 unmap
+			Graphics::Context->Unmap(vsConstBuff.Get(), 0);
+		}
 	}
 
 	// DRAW geometry
