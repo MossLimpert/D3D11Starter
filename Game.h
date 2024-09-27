@@ -6,6 +6,7 @@
 #include <memory>
 
 #include "Mesh.h"
+#include "GameEntity.h"
 
 class Game
 {
@@ -38,6 +39,7 @@ private:
 	
 	// list of meshes
 	std::vector<std::shared_ptr<Mesh>> meshes;
+	std::vector<std::shared_ptr<GameEntity>> entities;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstBuff;
 

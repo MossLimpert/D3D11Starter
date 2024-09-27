@@ -123,7 +123,7 @@ void Transform::MoveAbsolute(float _x, float _y, float _z)
 {
     // storage to math
     DirectX::XMVECTOR curr = DirectX::XMLoadFloat3(&position);
-    DirectX::XMVECTOR incoming(_x, _y, _z);
+    DirectX::XMVECTOR incoming = DirectX::XMVectorSet(_x, _y, _z, 0.0f);
 
     // math
     curr = DirectX::XMVectorAdd(curr, incoming);
@@ -153,7 +153,7 @@ void Transform::Rotate(float _pitch, float _yaw, float _roll)
 {
     // storage to math
     DirectX::XMVECTOR curr = DirectX::XMLoadFloat3(&rotation);
-    DirectX::XMVECTOR incoming(_pitch, _yaw, _roll);
+    DirectX::XMVECTOR incoming = DirectX::XMVectorSet(_pitch, _yaw, _roll, 0.0f);
 
     // math
     curr = DirectX::XMVectorAdd(curr, incoming);
@@ -183,7 +183,7 @@ void Transform::Scale(float _x, float _y, float _z)
 {
     // storage to math
     DirectX::XMVECTOR curr = DirectX::XMLoadFloat3(&scale);
-    DirectX::XMVECTOR incoming(_x, _y, _z);
+    DirectX::XMVECTOR incoming = DirectX::XMVectorSet(_x, _y, _z, 0.0f);
 
     // math
     DirectX::XMVectorMultiply(curr, incoming);

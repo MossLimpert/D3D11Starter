@@ -15,7 +15,7 @@ public:
 	std::shared_ptr<Mesh> GetMesh();
 	std::shared_ptr<Transform> GetTransform();
 
-	void Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer);
+	void Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer, DirectX::XMFLOAT4 tint);
 private:
 
 	std::shared_ptr<Transform> transform;

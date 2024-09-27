@@ -38,7 +38,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 
-
+	world = Microsoft::WRL::ComPtr<DirectX::XMFLOAT4X4>();
 	// IMGUI
 	// 
 	// initialize itself, platform, and renderer backend
@@ -89,6 +89,7 @@ void Game::Initialize()
 		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
 
 		// 4 bind constant buffer for drawing
+		// now done inside gameentity.cpp draw
 		//Graphics::Context->VSSetConstantBuffers(0, 1, vsConstBuff.GetAddressOf());
 	}
 
@@ -250,6 +251,7 @@ void Game::CreateGeometry()
 	unsigned int indices[] = { 0, 1, 2 };
 	unsigned int heartIndices[] = { 0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7 };
 	unsigned int bunnyIndices[] = { 0,1,9,9,1,2,9,2,3,9,3,4,9,4,8,8,4,5,8,5,6,8,6,7,0,9,10,0,10,11,0,11,12,0,12,13,0,13,14 };
+	
 	// use mesh class!
 	// 
 	std::shared_ptr<Mesh> triangle = std::make_shared<Mesh>("triangle", vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices));
@@ -260,6 +262,17 @@ void Game::CreateGeometry()
 	meshes.push_back(heart);
 	meshes.push_back(bnuy);
 
+	std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle);
+	std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle);
+	std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart);
+	std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy);
+	std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy);
+
+	entities.push_back(triOne);
+	entities.push_back(triTwo);
+	entities.push_back(heartOne);
+	entities.push_back(bunnOne);
+	entities.push_back(bunnTwo);
 }
 
 /// <summary>
@@ -410,28 +423,28 @@ void Game::Draw(float deltaTime, float totalTime)
 		Graphics::Context->ClearDepthStencilView(Graphics::DepthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
 		// update constant buffers
-		{
-			// Assignment 4 constant buffer collect data
-			VertexShaderData vsData;
-			vsData.colorTint = _colorTint;
-			vsData.offset = _offset;
+		//{
+		//	// Assignment 4 constant buffer collect data
+		//	VertexShaderData vsData;
+		//	vsData.colorTint = _colorTint;
+		//	vsData.offset = _offset;
 
-			// Assingment 4 constant buffer map
-			D3D11_MAPPED_SUBRESOURCE mappedBuff = {};
-			Graphics::Context->Map(
-				vsConstBuff.Get(),
-				0,
-				D3D11_MAP_WRITE_DISCARD,
-				0,
-				&mappedBuff
-			);
+		//	// Assingment 4 constant buffer map
+		//	D3D11_MAPPED_SUBRESOURCE mappedBuff = {};
+		//	Graphics::Context->Map(
+		//		vsConstBuff.Get(),
+		//		0, 
+		//		D3D11_MAP_WRITE_DISCARD,
+		//		0,
+		//		&mappedBuff
+		//	);
 
-			// 4 memcpy
-			memcpy(mappedBuff.pData, &vsData, sizeof(vsData));
+		//	// 4 memcpy
+		//	memcpy(mappedBuff.pData, &vsData, sizeof(vsData));
 
-			// 4 unmap
-			Graphics::Context->Unmap(vsConstBuff.Get(), 0);
-		}
+		//	// 4 unmap
+		//	Graphics::Context->Unmap(vsConstBuff.Get(), 0);
+		//}
 	}
 
 	// DRAW geometry
@@ -440,8 +453,8 @@ void Game::Draw(float deltaTime, float totalTime)
 	{
 		//printf("%i", meshes.size());
 		//for (int i = meshes.size() - 1; i > 0; i--) {
-		for (auto& m : meshes) {
-			m->Draw();
+		for (auto& g : entities) {
+			g->Draw(vsConstBuff, _colorTint);
 		}
 	}
 
