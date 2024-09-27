@@ -89,7 +89,7 @@ void Game::Initialize()
 		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
 
 		// 4 bind constant buffer for drawing
-		Graphics::Context->VSSetConstantBuffers(0, 1, vsConstBuff.GetAddressOf());
+		//Graphics::Context->VSSetConstantBuffers(0, 1, vsConstBuff.GetAddressOf());
 	}
 
 	

@@ -4,19 +4,45 @@
 
 class Transform
 {
-
-	bool dirty; // tracks if any of the world matrix's components have changed this frame
-	DirectX::XMVECTOR position;
-	DirectX::XMVECTOR rotation;	// pitch, yaw, roll stored as x, y, z
-	DirectX::XMVECTOR scale;
-	DirectX::XMMATRIX world;
-	DirectX::XMMATRIX worldInverseTranspose;
-
 public: 
+	// RULE OF 3
 	Transform();				// constructor
 	~Transform();				// destructor
 	Transform(Transform& t);	// copy constructor
 
-	DirectX::XMMATRIX GetWorldMatrix();
+	// SETTERS
+	void SetPosition(float _x, float _y, float _z);
+	void SetPosition(DirectX::XMFLOAT3 _pos);
+	void SetRotation(float _pitch, float _yaw, float _roll);
+	void SetRotation(DirectX::XMFLOAT3 _rot);
+	void SetScale(float _x, float _y, float _z);
+	void SetScale(DirectX::XMFLOAT3 _scale);
+
+	// GETTERS
+	DirectX::XMFLOAT3 GetPosition();
+	DirectX::XMFLOAT3 GetPitchYawRoll();
+	DirectX::XMFLOAT3 GetScale();
+	DirectX::XMFLOAT4X4 GetWorldMatrix();
+	DirectX::XMFLOAT4X4 GetInverseTransposeWorldMatrix();
+
+	// TRANSFORMERS
+	void MoveAbsolute(float _x, float _y, float _z);
+	void MoveAbsolute(DirectX::XMFLOAT3 offset);
+	void Rotate(float _pitch, float _yaw, float _roll);
+	void Rotate(DirectX::XMFLOAT3 _rotation);
+	void Scale(float _x, float _y, float _z);
+	void Scale(DirectX::XMFLOAT3 _scale);
+
+private:
+	bool dirty; // tracks if any of the world matrix's components have changed this frame
+	
+	DirectX::XMFLOAT3 position;
+	DirectX::XMFLOAT3 rotation;	// pitch, yaw, roll stored as x, y, z
+	DirectX::XMFLOAT3 scale;
+	
+	DirectX::XMFLOAT4X4 world;
+	DirectX::XMFLOAT4X4 worldInverseTranspose;
+
+	
 };
 
