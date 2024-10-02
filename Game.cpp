@@ -312,15 +312,49 @@ void Game::BuildGui()
 	ImGui::ColorEdit4("RGBA Color Editor", &_color.x);
 
 	
-	ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
+	//ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
 	ImGui::ColorEdit4("Color Tint: ", &_colorTint.x);
 
-	if (ImGui::TreeNode("Mesh Information")) {
-		for (auto& m : meshes) {
-			ImGui::Text("Name: %s", m->GetName()); 
-			ImGui::Text("Tris: %d | ", m->GetIndexCount() / 3); ImGui::SameLine();
-			ImGui::Text("Verts: %d | ", m->GetVertexCount()); ImGui::SameLine();
-			ImGui::Text("Indices: %d", m->GetIndexCount());
+	if (ImGui::TreeNode("Game Entity Information")) {
+		for (auto& m : entities) {
+			ImGui::Text("Name: %s", m->GetMesh()->GetName()); 
+			ImGui::Text("Tris: %d | ", m->GetMesh()->GetIndexCount() / 3); ImGui::SameLine();
+			ImGui::Text("Verts: %d | ", m->GetMesh()->GetVertexCount()); ImGui::SameLine();
+			ImGui::Text("Indices: %d", m->GetMesh()->GetIndexCount());
+			ImGui::Text("Position: (%f, %f, %f)", m->GetTransform()->GetPosition().x, m->GetTransform()->GetPosition().y, m->GetTransform()->GetPosition().z);
+			ImGui::Text("Rotation: (%f, %f, %f)", m->GetTransform()->GetPitchYawRoll().x, m->GetTransform()->GetPitchYawRoll().y, m->GetTransform()->GetPitchYawRoll().z);
+			ImGui::Text("Scale: (%f, %f, %f)", m->GetTransform()->GetScale().x, m->GetTransform()->GetScale().y, m->GetTransform()->GetScale().z);
+			ImGui::NewLine();
+		}
+		ImGui::TreePop();
+	}
+
+	
+
+	if (ImGui::TreeNode("Game Entity Controls")) {
+		int i = 0;
+		for (auto& e : entities) {
+			//const char* name = "entity control for %d", i;
+			//ImGui::Begin(name);
+			ImGui::PushID(i);
+			ImGui::Text("Name: %s %d", e->GetMesh()->GetName(), i);
+			// position
+			DirectX::XMFLOAT3 pos = e->GetTransform()->GetPosition();
+			ImGui::DragFloat3("Position: ", &pos.x, 0.1f);
+			e->GetTransform()->SetPosition(pos);
+			// rotation
+			DirectX::XMFLOAT3 rot = e->GetTransform()->GetPitchYawRoll();
+			ImGui::DragFloat3("Rotation: ", &rot.x, 0.1f);
+			e->GetTransform()->SetRotation(rot);
+			// scale
+			DirectX::XMFLOAT3 sca = e->GetTransform()->GetScale();
+			ImGui::DragFloat3("Scale: ", &sca.x, 0.1f);
+			e->GetTransform()->SetScale(sca);
+
+			ImGui::NewLine();
+			ImGui::PopID();
+			//ImGui::End();
+			i++;
 		}
 		ImGui::TreePop();
 	}

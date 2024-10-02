@@ -25,6 +25,7 @@ public:
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetInverseTransposeWorldMatrix();
 
+
 	// TRANSFORMERS
 	void MoveAbsolute(float _x, float _y, float _z);
 	void MoveAbsolute(DirectX::XMFLOAT3 offset);
