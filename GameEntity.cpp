@@ -31,7 +31,9 @@ std::shared_ptr<Transform> GameEntity::GetTransform()
 void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer, DirectX::XMFLOAT4 tint)
 {
     // bind constant buffer
-    Graphics::Context->VSSetConstantBuffers(0, 1, &constantBuffer);
+    // using &constantBuffer tells windows we want to delete it, which isnt
+    // what we actually want. you have to use .GetAddressOf()
+    Graphics::Context->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
 
     // collect data
     VertexShaderData data;

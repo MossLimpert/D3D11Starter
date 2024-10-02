@@ -38,7 +38,6 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 
-	world = Microsoft::WRL::ComPtr<DirectX::XMFLOAT4X4>();
 	// IMGUI
 	// 
 	// initialize itself, platform, and renderer backend
@@ -313,9 +312,6 @@ void Game::BuildGui()
 	ImGui::ColorEdit4("RGBA Color Editor", &_color.x);
 
 	
-	//if (ImGui::Checkbox("Show Demo Window", &demoActive))
-	//if (demoActive) ImGui::ShowDemoWindow();
-
 	ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
 	ImGui::ColorEdit4("Color Tint: ", &_colorTint.x);
 
@@ -329,56 +325,6 @@ void Game::BuildGui()
 		ImGui::TreePop();
 	}
 	
-
-	//if (ImGui::TreeNode("Assignment 2 Extras")) {
-	//	if (ImGui::TreeNode("Basic Tree")) {
-	//		for (int i = 0; i < 5; i++) {
-	//			if (i == 0) ImGui::SetNextItemOpen(true, ImGuiCond_Once);
-
-	//			if (ImGui::TreeNode((void*)(intptr_t)i, "Child %d", i)) {
-	//				ImGui::Text("This is child node number %d", i);
-	//				ImGui::TreePop();
-	//			}
-	//		}
-	//		ImGui::TreePop();
-	//	}
-
-	//	if (ImGui::TreeNode("List box")) {
-	//		const char* items[] = { "dog", "cat", "snake", "lizard", "salamander", "rabbit" };
-	//		static int item_current_idx = 0;
-	//		if (ImGui::BeginListBox("animals")) {
-	//			for (int n = 0; n < IM_ARRAYSIZE(items); n++) {
-	//				const bool is_selected = (item_current_idx == n);
-	//				if (ImGui::Selectable(items[n], is_selected)) item_current_idx = n;
-
-	//				// set focus
-	//				if (is_selected) ImGui::SetItemDefaultFocus();
-	//			}
-	//			ImGui::EndListBox();
-	//		}
-	//		ImGui::TreePop();
-	//	}
-
-	//	if (ImGui::TreeNode("Table")) {
-	//		if (ImGui::BeginTable("Example Table", 3)) {
-	//			for (int row = 0; row < 4; row++) {
-	//				ImGui::TableNextRow();
-	//				for (int column = 0; column < 3; column++) {
-	//					ImGui::TableSetColumnIndex(column);
-	//					ImGui::Text("Row %d Column %d", row, column);
-	//				}
-	//			}
-	//			ImGui::EndTable();
-	//		}
-	//		ImGui::TreePop();
-	//	}
-
-	//	ImGui::TreePop();
-	//}
-
-	
-
-
 	ImGui::End();
 }
 
@@ -401,6 +347,26 @@ void Game::Update(float deltaTime, float totalTime)
 	// update imgui info 
 	GuiUpdate(deltaTime);
 	BuildGui();
+
+	// alter second triangle rotation every frame
+	DirectX::XMFLOAT3 triRot = entities[1]->GetTransform()->GetPitchYawRoll();
+	triRot.z += 1.0f * deltaTime;
+	entities[1]->GetTransform()->SetRotation(triRot);
+	// alter second triangle position every frame
+	DirectX::XMFLOAT3 triPos = entities[1]->GetTransform()->GetPosition();
+	triPos.x += 0.000002f;
+	entities[1]->GetTransform()->SetPosition(triPos);
+
+	// alter second bunny scale every frame
+	DirectX::XMFLOAT3 bunSca = entities[4]->GetTransform()->GetScale();
+	bunSca.x += 0.00005f;
+	bunSca.y += 0.00001f;
+	entities[4]->GetTransform()->SetScale(bunSca);
+	// alter second bunny position every frame
+	DirectX::XMFLOAT3 bunPos = entities[4]->GetTransform()->GetPosition();
+	bunPos.y -= 0.00005f;
+	entities[4]->GetTransform()->SetPosition(bunPos);
+
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
 		Window::Quit();
@@ -421,30 +387,7 @@ void Game::Draw(float deltaTime, float totalTime)
 		float color[4] = { _color.x, _color.y, _color.z, _color.w };
 		Graphics::Context->ClearRenderTargetView(Graphics::BackBufferRTV.Get(),	color);
 		Graphics::Context->ClearDepthStencilView(Graphics::DepthBufferDSV.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-		// update constant buffers
-		//{
-		//	// Assignment 4 constant buffer collect data
-		//	VertexShaderData vsData;
-		//	vsData.colorTint = _colorTint;
-		//	vsData.offset = _offset;
-
-		//	// Assingment 4 constant buffer map
-		//	D3D11_MAPPED_SUBRESOURCE mappedBuff = {};
-		//	Graphics::Context->Map(
-		//		vsConstBuff.Get(),
-		//		0, 
-		//		D3D11_MAP_WRITE_DISCARD,
-		//		0,
-		//		&mappedBuff
-		//	);
-
-		//	// 4 memcpy
-		//	memcpy(mappedBuff.pData, &vsData, sizeof(vsData));
-
-		//	// 4 unmap
-		//	Graphics::Context->Unmap(vsConstBuff.Get(), 0);
-		//}
+ 
 	}
 
 	// DRAW geometry

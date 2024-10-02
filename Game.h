@@ -43,8 +43,6 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstBuff;
 
-	// assignment 5
-	Microsoft::WRL::ComPtr<DirectX::XMFLOAT4X4> world;
 
 	// Shaders and shader-related constructs
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pixelShader;

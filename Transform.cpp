@@ -20,11 +20,6 @@ Transform::Transform()
 
 Transform::~Transform()
 {
-    delete[] & position;
-    delete[] & rotation;
-    delete[] & scale;
-    delete[] & world;
-    delete[] & worldInverseTranspose;
 }
 
 Transform::Transform(Transform& t)
