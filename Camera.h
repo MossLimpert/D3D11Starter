@@ -2,6 +2,7 @@
 
 #include "Transform.h"
 #include <DirectXMath.h>
+#include <memory>
 
 enum Projection {
 	PERSPECTIVE,
@@ -19,6 +20,7 @@ public:
 	// GETTERS
 	DirectX::XMFLOAT4X4 GetView();
 	DirectX::XMFLOAT4X4 GetProjection();
+	std::shared_ptr<Transform> GetTransform();
 	const char* GetName();
 	float GetFov();
 	float GetNearClip();
@@ -27,12 +29,13 @@ public:
 	float GetMouseSpd();
 
 	void Update(float dt);
+	void UpdateViewMatrix();
 	void UpdateProjectionMatrix(float _aspectRatio);
 
 private:
 
 	// FIELDS
-	Transform transform;
+	std::shared_ptr<Transform> transform;
 	DirectX::XMFLOAT4X4 view;
 	DirectX::XMFLOAT4X4 projection;
 	float aspectRatio;
@@ -40,7 +43,5 @@ private:
 	Projection curProjection;
 	const char* name;
 
-	void UpdateViewMatrix();
-	
 };
 

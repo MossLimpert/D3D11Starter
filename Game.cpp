@@ -328,6 +328,15 @@ void Game::BuildGui()
 		ImGui::Text("Near Clip: %f  |  Far Clip: %f", cameras[curCamera]->GetNearClip(), cameras[curCamera]->GetFarClip());
 		ImGui::Text("Movement Speed: %f", cameras[curCamera]->GetMvmtSpd());
 		ImGui::Text("Mouse Speed: %f", cameras[curCamera]->GetMouseSpd());
+		//DirectX::XMMATRIX viewMat = DirectX::XMLoadFloat4x4(cameras[curCamera]->GetView());
+		/*if (ImGui::BeginTable("View: ", 4)) {
+			for (int row = 0; row < 3; row++) {
+				for (int column = 0; column < 3; column++) {
+					ImGui::Text("%f", cameras[curCamera]->GetView()[row]);
+				}
+			}
+		}*/
+
 		ImGui::NewLine();
 
 	}
