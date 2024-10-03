@@ -28,7 +28,7 @@ std::shared_ptr<Transform> GameEntity::GetTransform()
     return transform;
 }
 
-void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer, DirectX::XMFLOAT4 tint)
+void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer, DirectX::XMFLOAT4 tint, std::shared_ptr<Camera> cam)
 {
     // bind constant buffer
     // using &constantBuffer tells windows we want to delete it, which isnt
@@ -39,6 +39,8 @@ void GameEntity::Draw(Microsoft::WRL::ComPtr<ID3D11Buffer> constantBuffer, Direc
     VertexShaderData data;
     data.colorTint = tint;
     data.world = transform->GetWorldMatrix();
+    data.view = cam->GetView();
+    data.projection = cam->GetProjection();
 
     // map 
     D3D11_MAPPED_SUBRESOURCE mappedBuff = {};

@@ -7,6 +7,7 @@
 
 #include "Mesh.h"
 #include "GameEntity.h"
+#include "Camera.h"
 
 class Game
 {
@@ -30,6 +31,8 @@ private:
 	void CreateGeometry();
 	void GuiUpdate(float deltaTime);
 	void BuildGui();
+	void InitializeCamera();
+	void UpdateObjectTransformations(float deltaTime);
 
 	// Note the usage of ComPtr below
 	//  - This is a smart pointer for objects that abide by the
@@ -40,8 +43,11 @@ private:
 	// list of meshes
 	std::vector<std::shared_ptr<Mesh>> meshes;
 	std::vector<std::shared_ptr<GameEntity>> entities;
+	std::vector<std::shared_ptr<Camera>> cameras;
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstBuff;
+
+	int curCamera;
 
 
 	// Shaders and shader-related constructs

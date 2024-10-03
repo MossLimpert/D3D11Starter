@@ -24,6 +24,9 @@ public:
 	DirectX::XMFLOAT3 GetScale();
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 	DirectX::XMFLOAT4X4 GetInverseTransposeWorldMatrix();
+	DirectX::XMFLOAT3 GetRight();
+	DirectX::XMFLOAT3 GetUp();
+	DirectX::XMFLOAT3 GetForward();
 
 
 	// TRANSFORMERS
@@ -33,6 +36,8 @@ public:
 	void Rotate(DirectX::XMFLOAT3 _rotation);
 	void Scale(float _x, float _y, float _z);
 	void Scale(DirectX::XMFLOAT3 _scale);
+	void MoveRelative(float _x, float _y, float _z);
+	void MoveRelative(DirectX::XMFLOAT3 offset);
 
 private:
 	bool dirty; // tracks if any of the world matrix's components have changed this frame

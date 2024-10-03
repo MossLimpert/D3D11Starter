@@ -37,6 +37,8 @@ void Game::Initialize()
 	// init fields
 	// 
 	demoActive = false;
+	curCamera = 0;
+	InitializeCamera();
 
 	// IMGUI
 	// 
@@ -86,10 +88,6 @@ void Game::Initialize()
 		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
-
-		// 4 bind constant buffer for drawing
-		// now done inside gameentity.cpp draw
-		//Graphics::Context->VSSetConstantBuffers(0, 1, vsConstBuff.GetAddressOf());
 	}
 
 	
@@ -315,6 +313,25 @@ void Game::BuildGui()
 	//ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
 	ImGui::ColorEdit4("Color Tint: ", &_colorTint.x);
 
+	{
+		int i = 0;
+		for (auto& c : cameras) {
+
+			ImGui::RadioButton(c->GetName(), &curCamera, i);
+			i++;
+		}
+
+		ImGui::Text("Active Camera Information");
+		ImGui::Text("Name: %s", cameras[curCamera]->GetName());
+		//ImGui::Text("View Matrix"); ImGui::SameLine();
+		ImGui::Text("Field of View: %f", cameras[curCamera]->GetFov());
+		ImGui::Text("Near Clip: %f  |  Far Clip: %f", cameras[curCamera]->GetNearClip(), cameras[curCamera]->GetFarClip());
+		ImGui::Text("Movement Speed: %f", cameras[curCamera]->GetMvmtSpd());
+		ImGui::Text("Mouse Speed: %f", cameras[curCamera]->GetMouseSpd());
+		ImGui::NewLine();
+
+	}
+
 	if (ImGui::TreeNode("Game Entity Information")) {
 		for (auto& m : entities) {
 			ImGui::Text("Name: %s", m->GetMesh()->GetName()); 
@@ -362,26 +379,18 @@ void Game::BuildGui()
 	ImGui::End();
 }
 
-
-// --------------------------------------------------------
-// Handle resizing to match the new window size
-//  - Eventually, we'll want to update our 3D camera
-// --------------------------------------------------------
-void Game::OnResize()
+void Game::InitializeCamera()
 {
+	float aR = (float)Window::Width() / Window::Height();
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0, 0, -5.0f), "camera 1");
+	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), 5, 0.01, 100, 3, 0.002f, "camera 2");
+
+	cameras.push_back(camera);
+	cameras.push_back(cam2);
 }
 
-
-// --------------------------------------------------------
-// Update your game here - user input, move objects, AI, etc.
-// --------------------------------------------------------
-void Game::Update(float deltaTime, float totalTime)
+void Game::UpdateObjectTransformations(float deltaTime)
 {
-	
-	// update imgui info 
-	GuiUpdate(deltaTime);
-	BuildGui();
-
 	// alter second triangle rotation every frame
 	DirectX::XMFLOAT3 triRot = entities[1]->GetTransform()->GetPitchYawRoll();
 	triRot.z += 1.0f * deltaTime;
@@ -401,6 +410,40 @@ void Game::Update(float deltaTime, float totalTime)
 	bunPos.y -= 0.00005f;
 	entities[4]->GetTransform()->SetPosition(bunPos);
 
+}
+
+
+// --------------------------------------------------------
+// Handle resizing to match the new window size
+// update our 3D camera
+// --------------------------------------------------------
+void Game::OnResize()
+{
+	float aR = (float)Window::Width() / Window::Height();	// get new aspect ratio
+	// update projection matrix
+	if (!cameras.empty()) {
+		for (auto& c : cameras) {
+			c->UpdateProjectionMatrix(aR);
+		}
+	}
+}
+
+
+// --------------------------------------------------------
+// Update your game here - user input, move objects, AI, etc.
+// --------------------------------------------------------
+void Game::Update(float deltaTime, float totalTime)
+{
+	
+	// update imgui info 
+	GuiUpdate(deltaTime);
+	BuildGui();
+
+	UpdateObjectTransformations(deltaTime);
+
+	// update cameras
+	for (auto& c : cameras) c->Update(deltaTime);
+	
 	// Example input checking: Quit if the escape key is pressed
 	if (Input::KeyDown(VK_ESCAPE))
 		Window::Quit();
@@ -427,13 +470,10 @@ void Game::Draw(float deltaTime, float totalTime)
 	// DRAW geometry
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
-	{
-		//printf("%i", meshes.size());
-		//for (int i = meshes.size() - 1; i > 0; i--) {
-		for (auto& g : entities) {
-			g->Draw(vsConstBuff, _colorTint);
-		}
+	for (auto& g : entities) {
+		g->Draw(vsConstBuff, _colorTint, cameras[curCamera]);
 	}
+	
 
 	//
 	// IMGUI
