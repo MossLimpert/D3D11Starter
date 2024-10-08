@@ -328,14 +328,17 @@ void Game::BuildGui()
 		ImGui::Text("Near Clip: %f  |  Far Clip: %f", cameras[curCamera]->GetNearClip(), cameras[curCamera]->GetFarClip());
 		ImGui::Text("Movement Speed: %f", cameras[curCamera]->GetMvmtSpd());
 		ImGui::Text("Mouse Speed: %f", cameras[curCamera]->GetMouseSpd());
-		//DirectX::XMMATRIX viewMat = DirectX::XMLoadFloat4x4(cameras[curCamera]->GetView());
-		/*if (ImGui::BeginTable("View: ", 4)) {
-			for (int row = 0; row < 3; row++) {
-				for (int column = 0; column < 3; column++) {
-					ImGui::Text("%f", cameras[curCamera]->GetView()[row]);
-				}
+		DirectX::XMFLOAT4X4 viewMat = cameras[curCamera]->GetView();
+		//ImGui::BeginTable("View: ", 4);
+		for (int row = 0; row < 4; row++) {
+			for (int column = 0; column < 4; column++) {
+				ImGui::Text(" %f |", viewMat.m[row][column]);
+				ImGui::SameLine();
 			}
-		}*/
+			ImGui::NewLine();
+		}
+		//ImGui::EndTable();
+		
 
 		ImGui::NewLine();
 
@@ -392,7 +395,7 @@ void Game::InitializeCamera()
 {
 	float aR = (float)Window::Width() / Window::Height();
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0, 0, -5.0f), "camera 1");
-	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), 5, 0.01, 100, 3, 0.002f, "camera 2");
+	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), DirectX::XM_PIDIV4, 0.01, 100, 3, 0.002f, "camera 2");
 
 	cameras.push_back(camera);
 	cameras.push_back(cam2);
