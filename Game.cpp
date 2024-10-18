@@ -8,7 +8,8 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "Mesh.h"
-#include "BufferStructs.h" // Assignment 4
+#include "BufferStructs.h"	// Assignment 4
+#include "Material.h"		// Assignment 7
 
 #include <DirectXMath.h>
 
@@ -54,6 +55,7 @@ void Game::Initialize()
 	// geometry to draw and some simple camera matrices.
 	//  - You'll be expanding and/or replacing these later
 	LoadShaders();
+	CreateMaterials();
 	CreateGeometry();
 
 	// Set initial graphics API state
@@ -69,7 +71,7 @@ void Game::Initialize()
 
 	// Set up Constant Buffers
 	//
-	{
+	/*{
 		D3D11_BUFFER_DESC cbDesc = {};
 		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		cbDesc.ByteWidth = (sizeof(VertexShaderData) + 15) / 16 * 16;
@@ -77,7 +79,7 @@ void Game::Initialize()
 		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
-	}
+	}*/
 
 	
 }
@@ -194,17 +196,37 @@ void Game::CreateGeometry()
 	meshes.push_back(heart);
 	meshes.push_back(bnuy);
 
-	std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle);
-	std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle);
-	std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart);
-	std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy);
-	std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy);
+	std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle, materials[0]);
+	std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle, materials[1]);
+	std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart, materials[2]);
+	std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy, materials[0]);
+	std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy, materials[1]);
 
 	entities.push_back(triOne);
 	entities.push_back(triTwo);
 	entities.push_back(heartOne);
 	entities.push_back(bunnOne);
 	entities.push_back(bunnTwo);
+}
+
+// creates materials for drawing game objects with
+void Game::CreateMaterials()
+{
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
+		vertexShader,
+		pixelShader
+	));
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+		vertexShader,
+		pixelShader
+	));
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+		vertexShader,
+		pixelShader
+	));
 }
 
 /// <summary>
@@ -329,8 +351,8 @@ void Game::BuildGui()
 void Game::InitializeCamera()
 {
 	float aR = (float)Window::Width() / Window::Height();
-	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0, 0, -5.0f), "camera 1");
-	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), DirectX::XM_PIDIV4, 0.01, 100, 3, 0.002f, "camera 2");
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), DirectX::XM_PIDIV4, 0.01, 100, 3, 0.002f, "camera 1");
+	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0, 0, -5.0f), "camera 2"); 
 
 	cameras.push_back(camera);
 	cameras.push_back(cam2);
@@ -418,7 +440,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
 	for (auto& g : entities) {
-		g->Draw(vsConstBuff, _colorTint, cameras[curCamera]);
+		g->Draw(_colorTint, cameras[curCamera]);
 	}
 	
 

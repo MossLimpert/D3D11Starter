@@ -30,6 +30,7 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void CreateGeometry();
+	void CreateMaterials();
 	void GuiUpdate(float deltaTime);
 	void BuildGui();
 	void InitializeCamera();
@@ -45,8 +46,9 @@ private:
 	std::vector<std::shared_ptr<Mesh>> meshes;
 	std::vector<std::shared_ptr<GameEntity>> entities;
 	std::vector<std::shared_ptr<Camera>> cameras;
+	std::vector<std::shared_ptr<Material>> materials;
 
-	Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstBuff;
+	//Microsoft::WRL::ComPtr<ID3D11Buffer> vsConstBuff;
 
 	int curCamera;
 
