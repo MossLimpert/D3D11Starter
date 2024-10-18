@@ -125,10 +125,10 @@ void Game::CreateGeometry()
 {
 	// Create some temporary variables to represent colors
 	// - Not necessary, just makes things more readable
-	XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	/*XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
 	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	XMFLOAT4 periwinkle = XMFLOAT4(0.68f, 0.4f, 1.0f, 1.0f);
+	XMFLOAT4 periwinkle = XMFLOAT4(0.68f, 0.4f, 1.0f, 1.0f);*/
 
 	// Set up the vertices of the triangle we would like to draw
 	// - We're going to copy this array, exactly as it exists in CPU memory
@@ -142,71 +142,122 @@ void Game::CreateGeometry()
 	//    knowing the exact size (in pixels) of the image/window/etc.  
 	// - Long story short: Resizing the window also resizes the triangle,
 	//    since we're describing the triangle in terms of the window itself
-	Vertex vertices[] =
-	{
-		{ XMFLOAT3(+0.0f, +0.5f, +0.0f), red },
-		{ XMFLOAT3(+0.5f, -0.5f, +0.0f), blue },
-		{ XMFLOAT3(-0.5f, -0.5f, +0.0f), green },
-	};
-	Vertex heartVerts[] = {
-		{ XMFLOAT3(-0.6f, 0.4f, 0.0f), blue},
-		{ XMFLOAT3(-0.8f, 0.8f, 0.0f), red},
-		{ XMFLOAT3(-0.75f, 0.9f, 0.0f), red},
-		{ XMFLOAT3(-0.65f, 0.9f, 0.0f), red},
-		{ XMFLOAT3(-0.6f, 0.85f, 0.0f), periwinkle},
-		{ XMFLOAT3(-0.55f, 0.9f, 0.0f), periwinkle},
-		{ XMFLOAT3(-0.45f, 0.9f, 0.0f), periwinkle},
-		{ XMFLOAT3(-0.4f, 0.8f, 0.0f), periwinkle}
-	};
-	Vertex bunnyVerts[] = {
-		{ XMFLOAT3(0.2f, 0.5f, 0.0f), blue},
-		{ XMFLOAT3(0.25f, 0.7f,0.0f), blue},
-		{ XMFLOAT3(0.2f, 0.8f, 0.0f), blue},
-		{ XMFLOAT3(0.25f, 0.85f,0.0f), blue},
-		{ XMFLOAT3(0.3f, 0.85f, 0.0f), periwinkle},
-		{ XMFLOAT3(0.35f, 0.95f, 0.0f), periwinkle},
-		{ XMFLOAT3(0.45f, 1.0f, 0.0f), periwinkle},
-		{ XMFLOAT3(0.45f, 0.9f, 0.0f), periwinkle},
-		{ XMFLOAT3(0.35f, 0.8f, 0.0f), periwinkle},
-		{ XMFLOAT3(0.35f, 0.725f, 0.0f), blue},
-		{ XMFLOAT3(0.4f, 0.75f, 0.0f), blue},
-		{ XMFLOAT3(0.6f, 0.75f, 0.0f), blue},
-		{ XMFLOAT3(0.7f, 0.7f, 0.0f), blue},
-		{ XMFLOAT3(0.65f, 0.65f, 0.0f), blue},
-		{ XMFLOAT3(0.75f, 0.5f, 0.0f), blue},
-	};
+	//Vertex vertices[] =
+	//{
+	//	{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(+0.5f, -0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0) },
+	//	{ XMFLOAT3(-0.5f, -0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0) },
+	//};
+	//Vertex heartVerts[] = {
+	//	{ XMFLOAT3(-0.6f, 0.4f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.8f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.75f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.65f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.6f, 0.85f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.55f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.45f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(-0.4f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)}
+	//};
+	//Vertex bunnyVerts[] = {
+	//	{ XMFLOAT3(0.2f, 0.5f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.25f, 0.7f,0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.2f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.25f, 0.85f,0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.3f, 0.85f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.35f, 0.95f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.45f, 1.0f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.45f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.35f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.35f, 0.725f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.4f, 0.75f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.6f, 0.75f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.7f, 0.7f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.65f, 0.65f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//	{ XMFLOAT3(0.75f, 0.5f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
+	//};
 
 
-	// Set up indices, which tell us which vertices to use and in which order
-	// - This is redundant for just 3 vertices, but will be more useful later
-	// - Indices are technically not required if the vertices are in the buffer 
-	//    in the correct order and each one will be used exactly once
-	// - But just to see how it's done...
-	unsigned int indices[] = { 0, 1, 2 };
-	unsigned int heartIndices[] = { 0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7 };
-	unsigned int bunnyIndices[] = { 0,1,9,9,1,2,9,2,3,9,3,4,9,4,8,8,4,5,8,5,6,8,6,7,0,9,10,0,10,11,0,11,12,0,12,13,0,13,14 };
-	
-	// use mesh class!
-	// 
-	std::shared_ptr<Mesh> triangle = std::make_shared<Mesh>("triangle", vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices));
-	std::shared_ptr<Mesh> heart = std::make_shared<Mesh>("heart", heartVerts, ARRAYSIZE(heartVerts), heartIndices, ARRAYSIZE(heartIndices));
-	std::shared_ptr<Mesh> bnuy = std::make_shared<Mesh>("bunny", bunnyVerts, ARRAYSIZE(bunnyVerts), bunnyIndices, ARRAYSIZE(bunnyIndices));
+	//// Set up indices, which tell us which vertices to use and in which order
+	//// - This is redundant for just 3 vertices, but will be more useful later
+	//// - Indices are technically not required if the vertices are in the buffer 
+	////    in the correct order and each one will be used exactly once
+	//// - But just to see how it's done...
+	//unsigned int indices[] = { 0, 1, 2 };
+	//unsigned int heartIndices[] = { 0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7 };
+	//unsigned int bunnyIndices[] = { 0,1,9,9,1,2,9,2,3,9,3,4,9,4,8,8,4,5,8,5,6,8,6,7,0,9,10,0,10,11,0,11,12,0,12,13,0,13,14 };
+	//
+	//// use mesh class!
+	//// 
+	//std::shared_ptr<Mesh> triangle = std::make_shared<Mesh>("triangle", vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices));
+	//std::shared_ptr<Mesh> heart = std::make_shared<Mesh>("heart", heartVerts, ARRAYSIZE(heartVerts), heartIndices, ARRAYSIZE(heartIndices));
+	//std::shared_ptr<Mesh> bnuy = std::make_shared<Mesh>("bunny", bunnyVerts, ARRAYSIZE(bunnyVerts), bunnyIndices, ARRAYSIZE(bunnyIndices));
 
-	meshes.push_back(triangle);
-	meshes.push_back(heart);
-	meshes.push_back(bnuy);
+	//meshes.push_back(triangle);
+	//meshes.push_back(heart);
+	//meshes.push_back(bnuy);
 
-	std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle, materials[0]);
-	std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle, materials[1]);
-	std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart, materials[2]);
-	std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy, materials[0]);
-	std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy, materials[1]);
+	//std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle, materials[0]);
+	//std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle, materials[1]);
+	//std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart, materials[2]);
+	//std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy, materials[0]);
+	//std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy, materials[1]);
 
-	entities.push_back(triOne);
-	entities.push_back(triTwo);
-	entities.push_back(heartOne);
-	entities.push_back(bunnOne);
-	entities.push_back(bunnTwo);
+	//entities.push_back(triOne);
+	//entities.push_back(triTwo);
+	//entities.push_back(heartOne);
+	//entities.push_back(bunnOne);
+	//entities.push_back(bunnTwo);
+
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/sphere.obj").c_str()
+			),
+			materials[0]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/cube.obj").c_str()
+			),
+			materials[1]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/cyllinder.obj").c_str()
+			),
+			materials[2]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/helix.obj").c_str()
+			),
+			materials[0]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/quad.obj").c_str()
+			),
+			materials[1]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/quad_double_sided.obj").c_str()
+			),
+			materials[2]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			std::make_shared<Mesh>(
+				FixPath(L"../../meshes/torus.obj").c_str()
+			),
+			materials[0]
+		));
+
 }
 
 // creates materials for drawing game objects with

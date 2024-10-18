@@ -18,6 +18,8 @@ public:
 	/// <param name="indexArray">index array</param>
 	/// <param name="numIndices">number of indices</param>
 	Mesh(const char* name, Vertex* vertArray, size_t numVerts, unsigned int* indexArray, size_t numIndices);
+	
+	Mesh(const char* filePath);
 	/// <summary>
 	/// Mesh class destructor.
 	/// </summary>
