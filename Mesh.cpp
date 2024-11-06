@@ -217,17 +217,23 @@ Mesh::Mesh(const char* filePath)
 	// Close the file and create the actual buffers
 	obj.close();
 
-	this->indices = indcs[0];
+	// trying to fix uninitiallized vars problem
+	// 
+	// 
+	//this->indices = indcs[0];
 	name = "mesh";
-	this->verts = vertCounter;
+	//this->verts = vertCounter;
 
 	// - At this point, "verts" is a vector of Vertex structs, and can be used
 	//    directly to create a vertex buffer:  &verts[0] is the address of the first vert
 	//
-	
+	//this->vertBuff = &verts[0];
 	// - The vector "indices" is similar. It's a vector of unsigned ints and
 	//    can be used directly for the index buffer: &indices[0] is the address of the first int
 	//
+	//this->indexBuff = &indcs[0]; 
+	//this->indices = indexCounter;
+	//this->verts = vertCounter;
 	// - "vertCounter" is the number of vertices
 	// - "indexCounter" is the number of indices
 	// - Yes, these are effectively the same since OBJs do not index entire vertices!  This means
