@@ -113,22 +113,22 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> sph = std::make_shared<Mesh>("sphere",
 		FixPath(L"../../meshes/sphere.obj").c_str()
 	);
-	std::shared_ptr<Mesh> cube = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> cube = std::make_shared<Mesh>("cube",
 		FixPath(L"../../meshes/cube.obj").c_str()
 	);
-	std::shared_ptr<Mesh> cyllinder = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> cyllinder = std::make_shared<Mesh>("cyl",
 		FixPath(L"../../meshes/cyllinder.obj").c_str()
 	);
-	std::shared_ptr<Mesh> helix = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> helix = std::make_shared<Mesh>("helix",
 		FixPath(L"../../meshes/helix.obj").c_str()
 	);
-	std::shared_ptr<Mesh> quad = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> quad = std::make_shared<Mesh>("quad",
 		FixPath(L"../../meshes/quad.obj").c_str()
 	);
-	std::shared_ptr<Mesh> doubleSide = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> doubleSide = std::make_shared<Mesh>("doub",
 		FixPath(L"../../meshes/quad_double_sided.obj").c_str()
 	);
-	std::shared_ptr<Mesh> torus = std::make_shared<Mesh>(
+	std::shared_ptr<Mesh> torus = std::make_shared<Mesh>("torus",
 		FixPath(L"../../meshes/torus.obj").c_str()
 	);
 
@@ -324,8 +324,8 @@ void Game::BuildGui()
 void Game::InitializeCamera()
 {
 	float aR = (float)Window::Width() / Window::Height();
-	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0, 0.5, 0), DirectX::XM_PIDIV4, 0.01, 100, 3, 0.002f, "camera 1");
-	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0, 0, -5.0f), "camera 2"); 
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0.0f, 0.5, 0.0f), DirectX::XM_PIDIV4, 0.01f, 100.0f, 3.0f, 0.002f, "camera 1");
+	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.0f, 0.0f, -5.0f), "camera 2");
 
 	cameras.push_back(camera);
 	cameras.push_back(cam2);
