@@ -68,20 +68,6 @@ void Game::Initialize()
 		// Essentially: "What kind of shape should the GPU draw with our vertices?"
 		Graphics::Context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	}
-
-	// Set up Constant Buffers
-	//
-	/*{
-		D3D11_BUFFER_DESC cbDesc = {};
-		cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		cbDesc.ByteWidth = (sizeof(VertexShaderData) + 15) / 16 * 16;
-		cbDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-		cbDesc.Usage = D3D11_USAGE_DYNAMIC;
-
-		Graphics::Device->CreateBuffer(&cbDesc, 0, vsConstBuff.GetAddressOf());
-	}*/
-
-	
 }
 
 
@@ -123,141 +109,77 @@ void Game::LoadShaders()
 // --------------------------------------------------------
 void Game::CreateGeometry()
 {
-	// Create some temporary variables to represent colors
-	// - Not necessary, just makes things more readable
-	/*XMFLOAT4 red = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	XMFLOAT4 green = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	XMFLOAT4 blue = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	XMFLOAT4 periwinkle = XMFLOAT4(0.68f, 0.4f, 1.0f, 1.0f);*/
+	// LOAD MODELS
+	std::shared_ptr<Mesh> sph = std::make_shared<Mesh>("sphere",
+		FixPath(L"../../meshes/sphere.obj").c_str()
+	);
+	std::shared_ptr<Mesh> cube = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/cube.obj").c_str()
+	);
+	std::shared_ptr<Mesh> cyllinder = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/cyllinder.obj").c_str()
+	);
+	std::shared_ptr<Mesh> helix = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/helix.obj").c_str()
+	);
+	std::shared_ptr<Mesh> quad = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/quad.obj").c_str()
+	);
+	std::shared_ptr<Mesh> doubleSide = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/quad_double_sided.obj").c_str()
+	);
+	std::shared_ptr<Mesh> torus = std::make_shared<Mesh>(
+		FixPath(L"../../meshes/torus.obj").c_str()
+	);
 
-	// Set up the vertices of the triangle we would like to draw
-	// - We're going to copy this array, exactly as it exists in CPU memory
-	//    over to a Direct3D-controlled data structure on the GPU (the vertex buffer)
-	// - Note: Since we don't have a camera or really any concept of
-	//    a "3d world" yet, we're simply describing positions within the
-	//    bounds of how the rasterizer sees our screen: [-1 to +1] on X and Y
-	// - This means (0,0) is at the very center of the screen.
-	// - These are known as "Normalized Device Coordinates" or "Homogeneous 
-	//    Screen Coords", which are ways to describe a position without
-	//    knowing the exact size (in pixels) of the image/window/etc.  
-	// - Long story short: Resizing the window also resizes the triangle,
-	//    since we're describing the triangle in terms of the window itself
-	//Vertex vertices[] =
-	//{
-	//	{ XMFLOAT3(+0.0f, +0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(+0.5f, -0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0) },
-	//	{ XMFLOAT3(-0.5f, -0.5f, +0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0) },
-	//};
-	//Vertex heartVerts[] = {
-	//	{ XMFLOAT3(-0.6f, 0.4f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.8f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.75f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.65f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.6f, 0.85f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.55f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.45f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(-0.4f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)}
-	//};
-	//Vertex bunnyVerts[] = {
-	//	{ XMFLOAT3(0.2f, 0.5f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.25f, 0.7f,0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.2f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.25f, 0.85f,0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.3f, 0.85f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.35f, 0.95f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.45f, 1.0f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.45f, 0.9f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.35f, 0.8f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.35f, 0.725f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.4f, 0.75f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.6f, 0.75f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.7f, 0.7f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.65f, 0.65f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//	{ XMFLOAT3(0.75f, 0.5f, 0.0f), XMFLOAT3(0,0,-1), XMFLOAT2(0,0)},
-	//};
+	// mesh list
+	meshes.insert(meshes.end(), { sph, cube, cyllinder, helix, quad, doubleSide, torus });
 
-
-	//// Set up indices, which tell us which vertices to use and in which order
-	//// - This is redundant for just 3 vertices, but will be more useful later
-	//// - Indices are technically not required if the vertices are in the buffer 
-	////    in the correct order and each one will be used exactly once
-	//// - But just to see how it's done...
-	//unsigned int indices[] = { 0, 1, 2 };
-	//unsigned int heartIndices[] = { 0,1,2,0,2,3,0,3,4,0,4,5,0,5,6,0,6,7 };
-	//unsigned int bunnyIndices[] = { 0,1,9,9,1,2,9,2,3,9,3,4,9,4,8,8,4,5,8,5,6,8,6,7,0,9,10,0,10,11,0,11,12,0,12,13,0,13,14 };
-	//
-	//// use mesh class!
-	//// 
-	//std::shared_ptr<Mesh> triangle = std::make_shared<Mesh>("triangle", vertices, ARRAYSIZE(vertices), indices, ARRAYSIZE(indices));
-	//std::shared_ptr<Mesh> heart = std::make_shared<Mesh>("heart", heartVerts, ARRAYSIZE(heartVerts), heartIndices, ARRAYSIZE(heartIndices));
-	//std::shared_ptr<Mesh> bnuy = std::make_shared<Mesh>("bunny", bunnyVerts, ARRAYSIZE(bunnyVerts), bunnyIndices, ARRAYSIZE(bunnyIndices));
-
-	//meshes.push_back(triangle);
-	//meshes.push_back(heart);
-	//meshes.push_back(bnuy);
-
-	//std::shared_ptr<GameEntity> triOne = std::make_shared<GameEntity>(triangle, materials[0]);
-	//std::shared_ptr<GameEntity> triTwo = std::make_shared<GameEntity>(triangle, materials[1]);
-	//std::shared_ptr<GameEntity> heartOne = std::make_shared<GameEntity>(heart, materials[2]);
-	//std::shared_ptr<GameEntity> bunnOne = std::make_shared<GameEntity>(bnuy, materials[0]);
-	//std::shared_ptr<GameEntity> bunnTwo = std::make_shared<GameEntity>(bnuy, materials[1]);
-
-	//entities.push_back(triOne);
-	//entities.push_back(triTwo);
-	//entities.push_back(heartOne);
-	//entities.push_back(bunnOne);
-	//entities.push_back(bunnTwo);
-
+	// game entities
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/sphere.obj").c_str()
-			),
+			sph,
 			materials[0]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/cube.obj").c_str()
-			),
+			cube,
 			materials[1]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/cyllinder.obj").c_str()
-			),
+			cyllinder,
 			materials[2]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/helix.obj").c_str()
-			),
+			helix,
 			materials[0]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/quad.obj").c_str()
-			),
+			quad,
 			materials[1]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/quad_double_sided.obj").c_str()
-			),
+			doubleSide,
 			materials[2]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
-			std::make_shared<Mesh>(
-				FixPath(L"../../meshes/torus.obj").c_str()
-			),
+			torus,
 			materials[0]
 		));
 
+	// transforms
+	entities[0]->GetTransform()->MoveAbsolute(-9, 0, 0);
+	entities[1]->GetTransform()->MoveAbsolute(-6, 0, 0);
+	entities[2]->GetTransform()->MoveAbsolute(-3, 0, 0);
+	entities[3]->GetTransform()->MoveAbsolute(0, 0, 0);
+	entities[4]->GetTransform()->MoveAbsolute(3, 0, 0);
+	entities[5]->GetTransform()->MoveAbsolute(6, 0, 0);
+	entities[6]->GetTransform()->MoveAbsolute(9, 0, 0);
 }
 
 // creates materials for drawing game objects with
@@ -459,7 +381,7 @@ void Game::Update(float deltaTime, float totalTime)
 	GuiUpdate(deltaTime);
 	BuildGui();
 
-	UpdateObjectTransformations(deltaTime);
+	//UpdateObjectTransformations(deltaTime);
 
 	// update cameras
 	for (auto& c : cameras) c->Update(deltaTime);

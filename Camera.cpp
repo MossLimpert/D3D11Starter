@@ -116,12 +116,12 @@ float Camera::GetMouseSpd()
 void Camera::Update(float dt)
 {
 	// handle input
-	if (Input::KeyDown('W')) transform->MoveAbsolute(0, 0, mvmtSpd * dt);		// forward
-	if (Input::KeyDown('S')) transform->MoveAbsolute(0, 0, -(mvmtSpd * dt));	// backward
-	if (Input::KeyDown('A')) transform->MoveAbsolute(-(mvmtSpd * dt), 0, 0);	// left
-	if (Input::KeyDown('D')) transform->MoveAbsolute(mvmtSpd * dt, 0, 0);		// right
-	if (Input::KeyDown(VK_SPACE)) transform->MoveAbsolute(0, mvmtSpd * dt, 0);	// up
-	if (Input::KeyDown('X')) transform->MoveAbsolute(0, -(mvmtSpd * dt), 0);	// down
+	if (Input::KeyDown('W')) transform->MoveRelative(0, 0, mvmtSpd * dt);		// forward
+	if (Input::KeyDown('S')) transform->MoveRelative(0, 0, -(mvmtSpd * dt));	// backward
+	if (Input::KeyDown('A')) transform->MoveRelative(-(mvmtSpd * dt), 0, 0);	// left
+	if (Input::KeyDown('D')) transform->MoveRelative(mvmtSpd * dt, 0, 0);		// right
+	if (Input::KeyDown(VK_SPACE)) transform->MoveRelative(0, mvmtSpd * dt, 0);	// up
+	if (Input::KeyDown('X')) transform->MoveRelative(0, -(mvmtSpd * dt), 0);	// down
 	if (Input::MouseLeftDown()) {
 		float mvX = mouseSpd * Input::GetMouseXDelta();
 		float mvY = mouseSpd * Input::GetMouseYDelta();

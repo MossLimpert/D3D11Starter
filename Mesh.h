@@ -19,7 +19,7 @@ public:
 	/// <param name="numIndices">number of indices</param>
 	Mesh(const char* name, Vertex* vertArray, size_t numVerts, unsigned int* indexArray, size_t numIndices);
 	
-	Mesh(const char* filePath);
+	Mesh(const char* name, const std::wstring& filePath);
 	/// <summary>
 	/// Mesh class destructor.
 	/// </summary>

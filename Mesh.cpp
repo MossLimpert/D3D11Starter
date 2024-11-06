@@ -9,7 +9,7 @@ Mesh::Mesh(const char* _name, Vertex* vertArray, size_t numVerts, unsigned int* 
 	CreateBuffers(vertArray, numVerts, indexArray, numIndices);
 }
 
-Mesh::Mesh(const char* filePath)
+Mesh::Mesh(const char* name, const std::wstring& filePath)
 {
 	// Author: Chris Cascioli
 	// Purpose: Basic .OBJ 3D model loading, supporting positions, uvs and normals
@@ -20,6 +20,11 @@ Mesh::Mesh(const char* filePath)
 	//
 	// - NOTE: You'll need to #include <fstream>
 
+	this->name = name;
+	indices = 0;
+	verts = 0;
+	indexBuff = Microsoft::WRL::ComPtr<ID3D11Buffer>();
+	vertBuff = Microsoft::WRL::ComPtr<ID3D11Buffer>();
 
 	// File input object
 	std::ifstream obj(filePath);
@@ -221,7 +226,7 @@ Mesh::Mesh(const char* filePath)
 	// 
 	// 
 	//this->indices = indcs[0];
-	name = "mesh";
+	//this->indexBuff = &indcs[0];
 	//this->verts = vertCounter;
 
 	// - At this point, "verts" is a vector of Vertex structs, and can be used
@@ -231,9 +236,7 @@ Mesh::Mesh(const char* filePath)
 	// - The vector "indices" is similar. It's a vector of unsigned ints and
 	//    can be used directly for the index buffer: &indices[0] is the address of the first int
 	//
-	//this->indexBuff = &indcs[0]; 
-	//this->indices = indexCounter;
-	//this->verts = vertCounter;
+	//
 	// - "vertCounter" is the number of vertices
 	// - "indexCounter" is the number of indices
 	// - Yes, these are effectively the same since OBJs do not index entire vertices!  This means
