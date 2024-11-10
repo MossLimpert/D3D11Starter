@@ -15,10 +15,15 @@ struct VertexToPixel
 	//  |   Name          Semantic
 	//  |    |                |
 	//  v    v                v
-	float4 screenPosition	: SV_POSITION;
-    float3 normal			: NORMAL;
-	float2 uv				: TEXCOORD;
+    float4 screenPosition : SV_POSITION;
+    float3 normal : NORMAL;
+    float2 uv : TEXCOORD;
 };
+
+float random(float2 s)
+{
+    return frac(sin(dot(s, float2(12.9898, 78.233))) * 43758.5453123);
+}
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -35,5 +40,5 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-    return colorTint;
+    return colorTint * random(input.screenPosition);
 }

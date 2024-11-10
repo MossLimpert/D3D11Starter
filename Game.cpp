@@ -24,7 +24,7 @@ using namespace DirectX;
 //
 // FIELDS
 //
-XMFLOAT4 _color(0.0f, 1.0f, 0.0f, 1.0f);
+XMFLOAT4 _color(0.5f, 0.0f, 0.5f, 1.0f);
 XMFLOAT4 _colorTint(1.0f, 1.0f, 1.0f, 1.0f);
 XMFLOAT3 _offset(0.0f, 0.0f, 0.0f);
 static bool demoActive;
@@ -101,6 +101,12 @@ void Game::LoadShaders()
 		Graphics::Context, FixPath(L"VertexShader.cso").c_str());
 	pixelShader = std::make_shared<SimplePixelShader>(Graphics::Device,
 		Graphics::Context, FixPath(L"PixelShader.cso").c_str());
+	normalsPS = std::make_shared<SimplePixelShader>(Graphics::Device,
+		Graphics::Context, FixPath(L"normalPS.cso").c_str());
+	uvPS = std::make_shared<SimplePixelShader>(Graphics::Device,
+		Graphics::Context, FixPath(L"uvPS.cso").c_str());
+	pseudoPS = std::make_shared<SimplePixelShader>(Graphics::Device,
+		Graphics::Context, FixPath(L"pseudoPS.cso").c_str());
 }
 
 
@@ -110,6 +116,7 @@ void Game::LoadShaders()
 void Game::CreateGeometry()
 {
 	// LOAD MODELS
+	
 	std::shared_ptr<Mesh> sph = std::make_shared<Mesh>("sphere",
 		FixPath(L"../../meshes/sphere.obj").c_str()
 	);
@@ -117,7 +124,7 @@ void Game::CreateGeometry()
 		FixPath(L"../../meshes/cube.obj").c_str()
 	);
 	std::shared_ptr<Mesh> cyllinder = std::make_shared<Mesh>("cyl",
-		FixPath(L"../../meshes/cyllinder.obj").c_str()
+		FixPath(L"../../meshes/cylinder.obj").c_str()
 	);
 	std::shared_ptr<Mesh> helix = std::make_shared<Mesh>("helix",
 		FixPath(L"../../meshes/helix.obj").c_str()
@@ -131,11 +138,13 @@ void Game::CreateGeometry()
 	std::shared_ptr<Mesh> torus = std::make_shared<Mesh>("torus",
 		FixPath(L"../../meshes/torus.obj").c_str()
 	);
+	
 
 	// mesh list
 	meshes.insert(meshes.end(), { sph, cube, cyllinder, helix, quad, doubleSide, torus });
 
 	// game entities
+	// normies
 	entities.push_back(
 		std::make_shared<GameEntity>(
 			sph,
@@ -171,6 +180,115 @@ void Game::CreateGeometry()
 			torus,
 			materials[0]
 		));
+	// 2
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			sph,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cube,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cyllinder,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			helix,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			quad,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			doubleSide,
+			materials[3]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			torus,
+			materials[3]
+		));
+	//3
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			sph,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cube,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cyllinder,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			helix,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			quad,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			doubleSide,
+			materials[4]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			torus,
+			materials[4]
+		));
+	// 4
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			sph,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cube,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cyllinder,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			helix,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			quad,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			doubleSide,
+			materials[5]
+		));
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			torus,
+			materials[5]
+		));
+
 
 	// transforms
 	entities[0]->GetTransform()->MoveAbsolute(-9, 0, 0);
@@ -180,25 +298,72 @@ void Game::CreateGeometry()
 	entities[4]->GetTransform()->MoveAbsolute(3, 0, 0);
 	entities[5]->GetTransform()->MoveAbsolute(6, 0, 0);
 	entities[6]->GetTransform()->MoveAbsolute(9, 0, 0);
+
+	entities[7]->GetTransform()->MoveAbsolute(-9, 3, 0);
+	entities[8]->GetTransform()->MoveAbsolute(-6, 3, 0);
+	entities[9]->GetTransform()->MoveAbsolute(-3, 3, 0);
+	entities[10]->GetTransform()->MoveAbsolute(0, 3, 0);
+	entities[11]->GetTransform()->MoveAbsolute(3, 3, 0);
+	entities[12]->GetTransform()->MoveAbsolute(6, 3, 0);
+	entities[13]->GetTransform()->MoveAbsolute(9, 3, 0);
+
+	entities[14]->GetTransform()->MoveAbsolute(-9, 6, 0);
+	entities[15]->GetTransform()->MoveAbsolute(-6, 6, 0);
+	entities[16]->GetTransform()->MoveAbsolute(-3, 6, 0);
+	entities[17]->GetTransform()->MoveAbsolute(0, 6, 0);
+	entities[18]->GetTransform()->MoveAbsolute(3, 6, 0);
+	entities[19]->GetTransform()->MoveAbsolute(6, 6, 0);
+	entities[20]->GetTransform()->MoveAbsolute(9, 6, 0);
+
+	entities[21]->GetTransform()->MoveAbsolute(-9, -3, 0);
+	entities[22]->GetTransform()->MoveAbsolute(-6, -3, 0);
+	entities[23]->GetTransform()->MoveAbsolute(-3, -3, 0);
+	entities[24]->GetTransform()->MoveAbsolute(0, -3, 0);
+	entities[25]->GetTransform()->MoveAbsolute(3, -3, 0);
+	entities[26]->GetTransform()->MoveAbsolute(6, -3, 0);
+	entities[27]->GetTransform()->MoveAbsolute(9, -3, 0);
+
+
 }
 
 // creates materials for drawing game objects with
 void Game::CreateMaterials()
 {
+	//0
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
 		vertexShader,
 		pixelShader
 	));
+	//1
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
 		vertexShader,
 		pixelShader
 	));
+	//2
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
 		vertexShader,
 		pixelShader
+	));
+	//3
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+		vertexShader,
+		uvPS
+	));
+	//4
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+		vertexShader,
+		normalsPS
+	));
+	//5
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		vertexShader,
+		pseudoPS
 	));
 }
 

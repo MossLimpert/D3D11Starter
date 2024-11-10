@@ -49,38 +49,17 @@ void GameEntity::Draw(DirectX::XMFLOAT4 tint, std::shared_ptr<Camera> cam)
 
     std::shared_ptr<SimpleVertexShader> vs = material->GetVertexShader();
 
-    vs->SetFloat4("colorTint", material->GetColorTint());   // Strings here MUST
+    //vs->SetFloat4("colorTint", material->GetColorTint());   // Strings here MUST
     vs->SetMatrix4x4("world", transform->GetWorldMatrix()); // match variable
     vs->SetMatrix4x4("view", cam->GetView());               // names in your
     vs->SetMatrix4x4("projection", cam->GetProjection());   // shader’s cbuffer!
-    // bind constant buffer
-    // using &constantBuffer tells windows we want to delete it, which isnt
-    // what we actually want. you have to use .GetAddressOf()
-    //Graphics::Context->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
-    
-    //// collect data
-    //VertexShaderData data = VertexShaderData();
-    //data.colorTint = tint;
-    //data.world = transform->GetWorldMatrix();
-    //data.view = cam->GetView();
-    //data.projection = cam->GetProjection();
-
-    //// map 
-    //D3D11_MAPPED_SUBRESOURCE mappedBuff = {};
-    //Graphics::Context->Map(
-    //    constantBuffer.Get(),
-    //    0,
-    //    D3D11_MAP_WRITE_DISCARD,
-    //    0,
-    //    &mappedBuff
-    //);
+          
     vs->CopyAllBufferData();
-    //// memcpy
-    //memcpy(mappedBuff.pData, &data, sizeof(data));
 
-    //// unmap
-    //Graphics::Context->Unmap(constantBuffer.Get(), 0);
+    std::shared_ptr<SimplePixelShader> ps = material->GetPixelShader();
 
-    // set buffers and draw
+    ps->SetFloat4("colorTint", material->GetColorTint());
+    ps->CopyAllBufferData();
+
     mesh->Draw();
 }
