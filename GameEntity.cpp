@@ -59,6 +59,8 @@ void GameEntity::Draw(DirectX::XMFLOAT4 tint, std::shared_ptr<Camera> cam)
     std::shared_ptr<SimplePixelShader> ps = material->GetPixelShader();
 
     ps->SetFloat4("colorTint", material->GetColorTint());
+    ps->SetFloat3("camPos", cam->GetTransform()->GetPosition());
+    ps->SetFloat("roughness", material->GetRoughness());
     ps->CopyAllBufferData();
 
     mesh->Draw();

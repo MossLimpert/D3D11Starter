@@ -39,6 +39,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
+	ambient = DirectX::XMFLOAT3(0.0, 0.1, 0.25);
 	InitializeCamera();
 
 	// IMGUI
@@ -332,36 +333,42 @@ void Game::CreateMaterials()
 	//0
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
+		0.0f,
 		vertexShader,
 		pixelShader
 	));
 	//1
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
+		1.0f,
 		vertexShader,
 		pixelShader
 	));
 	//2
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+		0.5f,
 		vertexShader,
 		pixelShader
 	));
 	//3
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+		0.25f,
 		vertexShader,
 		uvPS
 	));
 	//4
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+		0.75f,
 		vertexShader,
 		normalsPS
 	));
 	//5
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		0.0f,
 		vertexShader,
 		pseudoPS
 	));
@@ -578,6 +585,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
 	for (auto& g : entities) {
+		g->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambient);
 		g->Draw(_colorTint, cameras[curCamera]);
 	}
 	

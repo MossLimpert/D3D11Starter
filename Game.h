@@ -49,7 +49,7 @@ private:
 	std::vector<std::shared_ptr<Material>> materials;
 
 	int curCamera;
-
+	DirectX::XMFLOAT3 ambient;
 
 	// Shaders and shader-related constructs
 	std::shared_ptr<SimplePixelShader> pixelShader;

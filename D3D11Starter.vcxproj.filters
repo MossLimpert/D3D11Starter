@@ -155,4 +155,9 @@
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="include.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>
