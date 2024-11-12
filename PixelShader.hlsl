@@ -23,5 +23,8 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// - This color (like most values passing through the rasterizer) is 
 	//   interpolated for each pixel between the corresponding vertices 
 	//   of the triangle we're rendering
-    return float4(roughness.rrr, 1);
+    //return float4(roughness.rrr, 1);
+    float3 wow = mul(ambient, colorTint);
+    float4 neow = float4(wow.x, wow.y, wow.z, 1.0f);
+    return neow;
 }
