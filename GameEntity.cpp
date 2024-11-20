@@ -42,26 +42,9 @@ void GameEntity::SetMaterial(std::shared_ptr<Material> _m)
 
 void GameEntity::Draw(DirectX::XMFLOAT4 tint, std::shared_ptr<Camera> cam)
 {
-    // set vertex and pixel shaders
-    // 
-    material->GetVertexShader()->SetShader();
-    material->GetPixelShader()->SetShader();
+    // set up material's shaders and data
+    material->PrepareMaterial(transform, cam);
 
-    std::shared_ptr<SimpleVertexShader> vs = material->GetVertexShader();
-
-    //vs->SetFloat4("colorTint", material->GetColorTint());   // Strings here MUST
-    vs->SetMatrix4x4("world", transform->GetWorldMatrix()); // match variable
-    vs->SetMatrix4x4("view", cam->GetView());               // names in your
-    vs->SetMatrix4x4("projection", cam->GetProjection());   // shader’s cbuffer!
-          
-    vs->CopyAllBufferData();
-
-    std::shared_ptr<SimplePixelShader> ps = material->GetPixelShader();
-
-    ps->SetFloat4("colorTint", material->GetColorTint());
-    ps->SetFloat3("camPos", cam->GetTransform()->GetPosition());
-    ps->SetFloat("roughness", material->GetRoughness());
-    ps->CopyAllBufferData();
-
+    // draw it
     mesh->Draw();
 }

@@ -2,6 +2,8 @@
 #include <DirectXMath.h>
 #include "SimpleShader.h"
 #include <memory>
+#include "Transform.h"
+#include "Camera.h"
 
 
 class Material
@@ -28,6 +30,8 @@ public:
 	void SetVertexShader(std::shared_ptr<SimpleVertexShader> _vs);
 	void SetPixelShader(std::shared_ptr<SimplePixelShader> _ps);
 	void SetRoughness(float _roughness);
+
+	void PrepareMaterial(std::shared_ptr<Transform> transform, std::shared_ptr<Camera> camera);
 
 };
 

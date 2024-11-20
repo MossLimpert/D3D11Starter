@@ -27,6 +27,7 @@ Material::Material(Material& m)
 	this->colorTint = m.colorTint;
 	this->vs = m.vs;
 	this->ps = m.ps;
+	this->roughness = m.roughness;
 }
 
 DirectX::XMFLOAT4 Material::GetColorTint()
@@ -67,5 +68,28 @@ void Material::SetPixelShader(std::shared_ptr<SimplePixelShader> _ps)
 void Material::SetRoughness(float _roughness)
 {
 	roughness = _roughness;
+}
+
+void Material::PrepareMaterial(std::shared_ptr<Transform> transform, std::shared_ptr<Camera> camera)
+{
+	// copied from the demo
+
+	// turn on the shaders for this material
+	vs->SetShader();
+	ps->SetShader();
+
+	// send data to the vertex shader
+	vs->SetMatrix4x4("world", transform->GetWorldMatrix());
+	vs->SetMatrix4x4("worldInvTranspose", transform->GetInverseTransposeWorldMatrix());
+	vs->SetMatrix4x4("view", camera->GetView());
+	vs->SetMatrix4x4("projection", camera->GetProjection());
+	vs->CopyAllBufferData();
+
+	// send data to the pixel shader
+	ps->SetFloat3("colorTint", DirectX::XMFLOAT3(colorTint.x, colorTint.y, colorTint.z));
+	ps->SetFloat("roughness", roughness);
+	ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
+	ps->CopyAllBufferData();
+
 }
 

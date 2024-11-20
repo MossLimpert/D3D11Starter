@@ -9,6 +9,7 @@
 #include "GameEntity.h"
 #include "Camera.h"
 #include "SimpleShader.h"
+#include "Lights.h"
 
 class Game
 {
@@ -30,6 +31,7 @@ private:
 	// Initialization helper methods - feel free to customize, combine, remove, etc.
 	void LoadShaders();
 	void CreateGeometry();
+	void CreateLights();
 	void CreateMaterials();
 	void GuiUpdate(float deltaTime);
 	void BuildGui();
@@ -47,6 +49,7 @@ private:
 	std::vector<std::shared_ptr<GameEntity>> entities;
 	std::vector<std::shared_ptr<Camera>> cameras;
 	std::vector<std::shared_ptr<Material>> materials;
+	std::vector<Light> lights;
 
 	int curCamera;
 	DirectX::XMFLOAT3 ambient;

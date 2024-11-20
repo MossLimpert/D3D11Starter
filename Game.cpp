@@ -39,8 +39,10 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
-	ambient = DirectX::XMFLOAT3(0.0, 0.1, 0.25);
+	ambient = DirectX::XMFLOAT3(0.1, 0.1, 0.25);
 	InitializeCamera();
+
+	//lights = std::vector<Light>();
 
 	// IMGUI
 	// 
@@ -58,6 +60,7 @@ void Game::Initialize()
 	LoadShaders();
 	CreateMaterials();
 	CreateGeometry();
+	CreateLights();
 
 	// Set initial graphics API state
 	//  - These settings persist until we change them
@@ -327,6 +330,71 @@ void Game::CreateGeometry()
 
 }
 
+void Game::CreateLights()
+{
+	// directional lights
+	Light light = {};
+	light.type = LIGHT_TYPE_DIRECTIONAL;
+	light.direction = DirectX::XMFLOAT3(1, -1, 0);
+	light.color = DirectX::XMFLOAT3(0.2, 0.2, 1.0);
+	light.intensity = 1.0f;
+
+	Light dir2 = {};
+	dir2.type = LIGHT_TYPE_DIRECTIONAL;
+	dir2.intensity = 2.0f;
+	dir2.color = DirectX::XMFLOAT3(1, 0, 0);
+	dir2.direction = DirectX::XMFLOAT3(1, 0, 0);
+
+	Light dir3 = {};
+	dir3.type = LIGHT_TYPE_DIRECTIONAL;
+	dir3.intensity = 1.5f;
+	dir3.color = DirectX::XMFLOAT3(0, 0, 1);
+	dir3.direction = DirectX::XMFLOAT3(0, 1, 0);
+
+	// point lights
+	Light point1 = {};
+	point1.color = DirectX::XMFLOAT3(1, 1, 1);
+	point1.type = LIGHT_TYPE_POINT;
+	point1.intensity = 0.5;
+	point1.position = DirectX::XMFLOAT3(0, 1.5f, 0);
+	point1.range = 12.0f;
+
+	Light point2 = {};
+	point2.color = DirectX::XMFLOAT3(1, 1, 1);
+	point2.type = LIGHT_TYPE_POINT;
+	point2.intensity = 5.5;
+	point2.position = DirectX::XMFLOAT3(-3.0f, 1.0f, 0);
+	point2.range = 5.0f;
+
+	// spot light
+	Light spot = {};
+	spot.color = XMFLOAT3(1, 1, 1);
+	spot.type = LIGHT_TYPE_SPOT;
+	spot.intensity = 2.0f;
+	spot.position = XMFLOAT3(6.0f, 1.5f, 0);
+	spot.direction = XMFLOAT3(0, -1, 0);
+	spot.range = 10.0f;
+	spot.spotOuterAngle = XMConvertToRadians(30.0f);
+	spot.spotInnerAngle = XMConvertToRadians(20.0f);
+
+	// add to lights
+	lights.push_back(light);
+	lights.push_back(dir2);
+	lights.push_back(dir3);
+	lights.push_back(point1);
+	lights.push_back(point2);
+	lights.push_back(spot);
+
+	// taken from demo
+	// Normalize directions of all non-point lights
+	for (int i = 0; i < lights.size(); i++)
+		if (lights[i].type != LIGHT_TYPE_POINT)
+			XMStoreFloat3(
+				&lights[i].direction,
+				XMVector3Normalize(XMLoadFloat3(&lights[i].direction))
+			);
+}
+
 // creates materials for drawing game objects with
 void Game::CreateMaterials()
 {
@@ -354,14 +422,14 @@ void Game::CreateMaterials()
 	//3
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		0.25f,
+		0.2f,
 		vertexShader,
 		uvPS
 	));
 	//4
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		0.75f,
+		0.1f,
 		vertexShader,
 		normalsPS
 	));
@@ -586,6 +654,11 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - Other Direct3D calls will also be necessary to do more complex things
 	for (auto& g : entities) {
 		g->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambient);
+		g->GetMaterial()->GetPixelShader()->SetData(
+			"lights", 
+			&lights[0],
+			sizeof(Light) * (int)lights.size()
+		);
 		g->Draw(_colorTint, cameras[curCamera]);
 	}
 	

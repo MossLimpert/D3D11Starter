@@ -1,12 +1,18 @@
 #include "include.hlsli"
 
+#define NUM_LIGHTS 6
+
 cbuffer ExternalData : register(b0)
 {
-    float4 colorTint;
-    float3 camPos;
     float roughness;
+    float3 colorTint;
+    float3 camPos;
     float3 ambient;
+    
+    Light lights[NUM_LIGHTS];
 }
+
+
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -19,12 +25,34 @@ cbuffer ExternalData : register(b0)
 // --------------------------------------------------------
 float4 main(VertexToPixel input) : SV_TARGET
 {
-	// Just return the input color
-	// - This color (like most values passing through the rasterizer) is 
-	//   interpolated for each pixel between the corresponding vertices 
-	//   of the triangle we're rendering
-    //return float4(roughness.rrr, 1);
-    float3 wow = mul(ambient, colorTint);
-    float4 neow = float4(wow.x, wow.y, wow.z, 1.0f);
-    return neow;
+	// make sure all the normals are normalized
+    input.normal = normalize(input.normal);
+    
+    // get the ambient color
+    float3 totalLight = ambient * colorTint;
+    
+    // loop through lights and apply
+    for (int i = 0; i < NUM_LIGHTS; i++)
+    {
+        // get light and normalize its direction
+        Light light = lights[i];
+        light.direction = normalize(light.direction);
+        
+        switch (lights[i].type)
+        {
+            case LIGHT_TYPE_DIRECTIONAL:
+                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint);
+                break;
+            
+            case LIGHT_TYPE_POINT:
+                totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint);
+                break;
+            
+            case LIGHT_TYPE_SPOT:
+                totalLight += SpotLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint);
+                break;
+        }
+    }
+    
+    return float4(totalLight, 1);
 }
