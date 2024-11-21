@@ -557,6 +557,80 @@ void Game::BuildGui()
 		}
 		ImGui::TreePop();
 	}
+
+	if (ImGui::TreeNode("Light Controls")) {
+		int i = 100;	// starting it higher jic it having the same id as above
+						// would mess with it
+		for (auto& l : lights) {
+			ImGui::PushID(i);
+
+			// display type
+			{
+				const char* type = "";
+				switch (l.type) {
+				case 0:
+					type = "Directional";
+					break;
+				case 1:
+					type = "Point";
+					break;
+				case 2:
+					type = "Spot";
+					break;
+				}
+				ImGui::Text("Type: %s", type);
+			}
+			// change position if not directional else show position
+			{
+				DirectX::XMFLOAT3 pos = l.position;
+				if (l.type != 0) {
+					ImGui::DragFloat3("Position", &pos.x, 0.1f);
+					l.position = pos;
+				}
+				else {
+					ImGui::Text("Position: x: %f | y: %f | z: %f", pos.x, pos.y, pos.z);
+				}
+			}
+			// change direction if not point
+			{
+				DirectX::XMFLOAT3 dir = l.direction;
+				if (l.type != 1) {
+					ImGui::DragFloat3("Direction", &dir.x, 0.1f);
+					l.direction = dir;
+				}
+				else {
+					ImGui::Text("Direction: x: %f | y: %f | z: %f");
+				}
+			}
+			// change color
+			DirectX::XMFLOAT3 col = l.color;
+			ImGui::ColorEdit3("Color", &col.x);
+			l.color = col;
+			// change range if not directional
+			if (l.type != 0) {
+				float r = l.range;
+				ImGui::DragFloat("Range", &r, 0.1f);
+				l.range = r;
+			}
+			// change intensity
+			float k = l.intensity;
+			ImGui::DragFloat("Intensity", &k, 0.1f);
+			l.intensity = k;
+			// if spot: change inner outer
+			if (l.type == 2) {
+				float m = l.spotInnerAngle;
+				float n = l.spotOuterAngle;
+				ImGui::DragFloat("Spot Inner Angle", &m, 0.1f);
+				ImGui::DragFloat("Spot Outer Angle", &n, 0.1f);
+				l.spotInnerAngle = m;
+				l.spotOuterAngle = n;
+			}
+
+			ImGui::PopID();
+			i++;
+		}
+		ImGui::TreePop();
+	}
 	
 	ImGui::End();
 }
