@@ -8,8 +8,9 @@
 #include "imgui/imgui_impl_dx11.h"
 #include "imgui/imgui_impl_win32.h"
 #include "Mesh.h"
-#include "BufferStructs.h"	// Assignment 4
-#include "Material.h"		// Assignment 7
+#include "BufferStructs.h"		// Assignment 4
+#include "Material.h"			// Assignment 7
+#include "packages/directxtk_desktop_win10.2024.10.29.1/include/WICTextureLoader.h"
 
 #include <DirectXMath.h>
 
@@ -39,7 +40,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
-	ambient = DirectX::XMFLOAT3(0.1, 0.1, 0.25);
+	ambient = DirectX::XMFLOAT3(0.1f, 0.1f, 0.25f);
 	InitializeCamera();
 
 	//lights = std::vector<Light>();
@@ -335,44 +336,44 @@ void Game::CreateLights()
 	// directional lights
 	Light light = {};
 	light.type = LIGHT_TYPE_DIRECTIONAL;
-	light.direction = DirectX::XMFLOAT3(1, -1, 0);
-	light.color = DirectX::XMFLOAT3(0.2, 0.2, 1.0);
+	light.direction = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
+	light.color = DirectX::XMFLOAT3(0.2f, 0.2f, 1.0f);
 	light.intensity = 1.0f;
 
 	Light dir2 = {};
 	dir2.type = LIGHT_TYPE_DIRECTIONAL;
 	dir2.intensity = 2.0f;
-	dir2.color = DirectX::XMFLOAT3(1, 0, 0);
-	dir2.direction = DirectX::XMFLOAT3(1, 0, 0);
+	dir2.color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+	dir2.direction = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 	Light dir3 = {};
 	dir3.type = LIGHT_TYPE_DIRECTIONAL;
 	dir3.intensity = 1.5f;
-	dir3.color = DirectX::XMFLOAT3(0, 0, 1);
-	dir3.direction = DirectX::XMFLOAT3(0, 1, 0);
+	dir3.color = DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f);
+	dir3.direction = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	// point lights
 	Light point1 = {};
-	point1.color = DirectX::XMFLOAT3(1, 1, 1);
+	point1.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	point1.type = LIGHT_TYPE_POINT;
-	point1.intensity = 0.5;
-	point1.position = DirectX::XMFLOAT3(0, 1.5f, 0);
+	point1.intensity = 0.5f;
+	point1.position = DirectX::XMFLOAT3(0.0f, 1.5f, 0.0f);
 	point1.range = 12.0f;
 
 	Light point2 = {};
-	point2.color = DirectX::XMFLOAT3(1, 1, 1);
+	point2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	point2.type = LIGHT_TYPE_POINT;
-	point2.intensity = 5.5;
-	point2.position = DirectX::XMFLOAT3(-3.0f, 1.0f, 0);
+	point2.intensity = 5.5f;
+	point2.position = DirectX::XMFLOAT3(-3.0f, 1.0f, 0.0f);
 	point2.range = 5.0f;
 
 	// spot light
 	Light spot = {};
-	spot.color = XMFLOAT3(1, 1, 1);
+	spot.color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	spot.type = LIGHT_TYPE_SPOT;
 	spot.intensity = 2.0f;
-	spot.position = XMFLOAT3(6.0f, 1.5f, 0);
-	spot.direction = XMFLOAT3(0, -1, 0);
+	spot.position = XMFLOAT3(6.0f, 1.5f, 0.0f);
+	spot.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
 	spot.range = 10.0f;
 	spot.spotOuterAngle = XMConvertToRadians(30.0f);
 	spot.spotInnerAngle = XMConvertToRadians(20.0f);
@@ -398,6 +399,14 @@ void Game::CreateLights()
 // creates materials for drawing game objects with
 void Game::CreateMaterials()
 {
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> test;
+	// Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(), 0, test
+	HRESULT res = CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(),
+		0,
+		&test);
 	//0
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
