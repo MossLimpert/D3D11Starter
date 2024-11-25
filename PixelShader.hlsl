@@ -12,7 +12,10 @@ cbuffer ExternalData : register(b0)
     Light lights[NUM_LIGHTS];
 }
 
+// FIELDS
 
+Texture2D SurfaceTexture    : register(t0); // t is registers for textures
+SamplerState BasicSampler   : register(s0); // s is registers for samplers
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -28,8 +31,10 @@ float4 main(VertexToPixel input) : SV_TARGET
 	// make sure all the normals are normalized
     input.normal = normalize(input.normal);
     
-    // get the ambient color
-    float3 totalLight = ambient * colorTint;
+    // get the texture color at given uv coords, apply tint and ambient
+    float3 totalLight = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
+    totalLight *= colorTint;
+    totalLight *= ambient;
     
     // loop through lights and apply
     for (int i = 0; i < NUM_LIGHTS; i++)

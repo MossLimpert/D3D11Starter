@@ -40,7 +40,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
-	ambient = DirectX::XMFLOAT3(0.1f, 0.1f, 0.25f);
+	ambient = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	InitializeCamera();
 
 	//lights = std::vector<Light>();
@@ -163,7 +163,7 @@ void Game::CreateGeometry()
 	entities.push_back(
 		std::make_shared<GameEntity>(
 			cyllinder,
-			materials[2]
+			materials[1]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
@@ -178,7 +178,7 @@ void Game::CreateGeometry()
 	entities.push_back(
 		std::make_shared<GameEntity>(
 			doubleSide,
-			materials[2]
+			materials[0]
 		));
 	entities.push_back(
 		std::make_shared<GameEntity>(
@@ -186,113 +186,113 @@ void Game::CreateGeometry()
 			materials[0]
 		));
 	// 2
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			sph,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cube,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cyllinder,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			helix,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			quad,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			doubleSide,
-			materials[3]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			torus,
-			materials[3]
-		));
-	//3
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			sph,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cube,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cyllinder,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			helix,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			quad,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			doubleSide,
-			materials[4]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			torus,
-			materials[4]
-		));
-	// 4
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			sph,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cube,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			cyllinder,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			helix,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			quad,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			doubleSide,
-			materials[5]
-		));
-	entities.push_back(
-		std::make_shared<GameEntity>(
-			torus,
-			materials[5]
-		));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		sph,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cube,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cyllinder,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		helix,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		quad,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		doubleSide,
+	//		materials[3]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		torus,
+	//		materials[3]
+	//	));
+	////3
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		sph,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cube,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cyllinder,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		helix,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		quad,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		doubleSide,
+	//		materials[4]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		torus,
+	//		materials[4]
+	//	));
+	//// 4
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		sph,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cube,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		cyllinder,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		helix,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		quad,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		doubleSide,
+	//		materials[5]
+	//	));
+	//entities.push_back(
+	//	std::make_shared<GameEntity>(
+	//		torus,
+	//		materials[5]
+	//	));
 
 
 	// transforms
@@ -304,7 +304,7 @@ void Game::CreateGeometry()
 	entities[5]->GetTransform()->MoveAbsolute(6, 0, 0);
 	entities[6]->GetTransform()->MoveAbsolute(9, 0, 0);
 
-	entities[7]->GetTransform()->MoveAbsolute(-9, 3, 0);
+	/*entities[7]->GetTransform()->MoveAbsolute(-9, 3, 0);
 	entities[8]->GetTransform()->MoveAbsolute(-6, 3, 0);
 	entities[9]->GetTransform()->MoveAbsolute(-3, 3, 0);
 	entities[10]->GetTransform()->MoveAbsolute(0, 3, 0);
@@ -326,7 +326,7 @@ void Game::CreateGeometry()
 	entities[24]->GetTransform()->MoveAbsolute(0, -3, 0);
 	entities[25]->GetTransform()->MoveAbsolute(3, -3, 0);
 	entities[26]->GetTransform()->MoveAbsolute(6, -3, 0);
-	entities[27]->GetTransform()->MoveAbsolute(9, -3, 0);
+	entities[27]->GetTransform()->MoveAbsolute(9, -3, 0);*/
 
 
 }
@@ -337,19 +337,19 @@ void Game::CreateLights()
 	Light light = {};
 	light.type = LIGHT_TYPE_DIRECTIONAL;
 	light.direction = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
-	light.color = DirectX::XMFLOAT3(0.2f, 0.2f, 1.0f);
+	light.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	light.intensity = 1.0f;
 
 	Light dir2 = {};
 	dir2.type = LIGHT_TYPE_DIRECTIONAL;
-	dir2.intensity = 2.0f;
-	dir2.color = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+	dir2.intensity = 1.0f;
+	dir2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dir2.direction = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 	Light dir3 = {};
 	dir3.type = LIGHT_TYPE_DIRECTIONAL;
-	dir3.intensity = 1.5f;
-	dir3.color = DirectX::XMFLOAT3(0.0f, 0.0f, 1.0f);
+	dir3.intensity = 1.0f;
+	dir3.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dir3.direction = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
 
 	// point lights
@@ -358,25 +358,25 @@ void Game::CreateLights()
 	point1.type = LIGHT_TYPE_POINT;
 	point1.intensity = 0.5f;
 	point1.position = DirectX::XMFLOAT3(0.0f, 1.5f, 0.0f);
-	point1.range = 12.0f;
+	point1.range = 1.0f;
 
 	Light point2 = {};
 	point2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	point2.type = LIGHT_TYPE_POINT;
-	point2.intensity = 5.5f;
+	point2.intensity = 0.5f;
 	point2.position = DirectX::XMFLOAT3(-3.0f, 1.0f, 0.0f);
-	point2.range = 5.0f;
+	point2.range = 1.0f;
 
 	// spot light
 	Light spot = {};
 	spot.color = XMFLOAT3(1.0f, 1.0f, 1.0f);
 	spot.type = LIGHT_TYPE_SPOT;
-	spot.intensity = 2.0f;
+	spot.intensity = 1.0f;
 	spot.position = XMFLOAT3(6.0f, 1.5f, 0.0f);
 	spot.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	spot.range = 10.0f;
-	spot.spotOuterAngle = XMConvertToRadians(30.0f);
-	spot.spotInnerAngle = XMConvertToRadians(20.0f);
+	spot.range = 1.0f;
+	spot.spotOuterAngle = XMConvertToRadians(20.0f);
+	spot.spotInnerAngle = XMConvertToRadians(10.0f);
 
 	// add to lights
 	lights.push_back(light);
@@ -399,7 +399,21 @@ void Game::CreateLights()
 // creates materials for drawing game objects with
 void Game::CreateMaterials()
 {
+	// create sampler
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> sampler;
+	D3D11_SAMPLER_DESC desc = {};
+	desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;	// outside U,V 0-1 then what
+	desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;	// wrap it!
+	desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	desc.Filter = D3D11_FILTER_ANISOTROPIC;		// what do do if we sample between pixels
+	desc.MaxAnisotropy = 16;					// allows textures to look good at bad angles
+	desc.MaxLOD = D3D11_FLOAT32_MAX;	// mip mapping at any range
+	HRESULT stateCheck = Graphics::Device->CreateSamplerState(&desc, sampler.GetAddressOf());
+
+
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> test;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tx2;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> spec;
 	// Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(), 0, test
 	HRESULT res = CreateWICTextureFromFile(
 		Graphics::Device.Get(),
@@ -407,48 +421,61 @@ void Game::CreateMaterials()
 		FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(),
 		0,
 		&test);
+	
+	HRESULT res2 = CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Specular Maps/rustymetal.png").c_str(),
+		0,
+		&tx2
+	);
+
 	//0
-	materials.push_back(std::make_shared<Material>(
-		DirectX::XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f),
-		0.0f,
-		vertexShader,
-		pixelShader
-	));
-	//1
-	materials.push_back(std::make_shared<Material>(
-		DirectX::XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f),
-		1.0f,
-		vertexShader,
-		pixelShader
-	));
-	//2
-	materials.push_back(std::make_shared<Material>(
-		DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
-		0.5f,
-		vertexShader,
-		pixelShader
-	));
-	//3
-	materials.push_back(std::make_shared<Material>(
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		0.2f,
-		vertexShader,
-		uvPS
-	));
-	//4
-	materials.push_back(std::make_shared<Material>(
-		DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-		0.1f,
-		vertexShader,
-		normalsPS
-	));
-	//5
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 		0.0f,
 		vertexShader,
-		pseudoPS
+		pixelShader
 	));
+	materials[0]->AddTextureSRV("SurfaceTexture", test);
+	materials[0]->AddSampler("BasicSampler", sampler);
+	//1
+	materials.push_back(std::make_shared<Material>(
+		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+		1.0f,
+		vertexShader,
+		pixelShader
+	));
+	materials[1]->AddTextureSRV("SurfaceTexture", tx2);
+	materials[1]->AddSampler("BasicSampler", sampler);
+	//2
+	//materials.push_back(std::make_shared<Material>(
+	//	DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
+	//	0.5f,
+	//	vertexShader,
+	//	pixelShader
+	//));
+	////3
+	//materials.push_back(std::make_shared<Material>(
+	//	DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+	//	0.2f,
+	//	vertexShader,
+	//	uvPS
+	//));
+	////4
+	//materials.push_back(std::make_shared<Material>(
+	//	DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
+	//	0.1f,
+	//	vertexShader,
+	//	normalsPS
+	//));
+	////5
+	//materials.push_back(std::make_shared<Material>(
+	//	DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
+	//	0.0f,
+	//	vertexShader,
+	//	pseudoPS
+	//));
 }
 
 /// <summary>
@@ -490,7 +517,7 @@ void Game::BuildGui()
 
 	
 	//ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
-	ImGui::ColorEdit4("Color Tint: ", &_colorTint.x);
+	ImGui::ColorEdit4("ambient: ", &ambient.x);
 
 	{
 		int i = 0;

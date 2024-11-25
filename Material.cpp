@@ -2,6 +2,7 @@
 #include <memory>
 
 
+
 Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath)
 {
 	this->colorTint = _colorTint;
@@ -91,5 +92,18 @@ void Material::PrepareMaterial(std::shared_ptr<Transform> transform, std::shared
 	ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
 	ps->CopyAllBufferData();
 
+	// loop through shader resource views and sampler states
+	for (auto& t : textureSRVs) { ps->SetShaderResourceView(t.first.c_str(), t.second.Get()); }
+	for (auto& s : samplers) { ps->SetSamplerState(s.first.c_str(), s.second); }
+}
+
+void Material::AddTextureSRV(std::string _name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _srv)
+{
+	textureSRVs.insert({ _name, _srv });
+}
+
+void Material::AddSampler(std::string _name, Microsoft::WRL::ComPtr<ID3D11SamplerState> _sampler)
+{
+	samplers.insert({_name, _sampler});
 }
 
