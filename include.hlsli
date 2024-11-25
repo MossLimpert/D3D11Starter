@@ -96,7 +96,7 @@ float SpecularBlinnPhong(float3 normal, float3 dirToLight, float3 toCamera, floa
 }
 
 // directional light calculation
-float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor)
+float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
 {
     // get the normalized direction towards the light
     float3 toLight = normalize(-light.direction);
@@ -105,7 +105,7 @@ float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camP
     // calculate the amount of diffuse and specular light, taking
     // roughness into account for specular
     float diff = Diffuse(normal, toLight);
-    float spec = SpecularPhong(normal, toLight, toCam, roughness);
+    float spec = SpecularPhong(normal, toLight, toCam, roughness) * specular;
     
     // combine
     return (diff * surfaceColor + spec) * light.intensity * light.color;
@@ -113,7 +113,7 @@ float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camP
 }
 
 // point light equation
-float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor)
+float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
 {
     // light direction
     float3 toLight = normalize(light.position - worldPos);
@@ -122,14 +122,14 @@ float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, fl
     // calculate light amounts
     float atten = Attenuate(light, worldPos);
     float diff = Diffuse(normal, toLight);
-    float spec = SpecularPhong(normal, toLight, toCam, roughness);
+    float spec = SpecularPhong(normal, toLight, toCam, roughness) * specular;
     
     // combine
     return (diff * surfaceColor + spec) * atten * light.intensity * light.color;
 }
 
 // spot light equation
-float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor)
+float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
 {
     // spot falloff
     float3 toLight = normalize(light.position - worldPos);
@@ -146,7 +146,7 @@ float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, flo
     
     // combine with point light calc
     // idgaf about optimization ;9
-    return PointLight(light, normal, worldPos, camPos, roughness, surfaceColor) * spotTerm;
+    return PointLight(light, normal, worldPos, camPos, roughness, surfaceColor, specular) * spotTerm;
 }
 
 #endif

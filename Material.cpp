@@ -3,20 +3,24 @@
 
 
 
-Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath)
+Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset)
 {
 	this->colorTint = _colorTint;
 	this->roughness = _roughness;
 	this->vs = std::make_shared<SimpleVertexShader>(device, context, vsPath);
 	this->ps = std::make_shared<SimplePixelShader>(device, context, psPath);
+	this->uvScale = scale;
+	this->uvOffset = offset;
 }
 
-Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps)
+Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset)
 {
 	this->colorTint = _colorTint;
 	this->roughness = _roughness;
 	this->vs = _vs;
 	this->ps = _ps;
+	this->uvScale = scale;
+	this->uvOffset = offset;
 }
 
 Material::~Material()
@@ -29,6 +33,8 @@ Material::Material(Material& m)
 	this->vs = m.vs;
 	this->ps = m.ps;
 	this->roughness = m.roughness;
+	this->uvScale = m.uvScale;
+	this->uvOffset = m.uvOffset;
 }
 
 DirectX::XMFLOAT4 Material::GetColorTint()
@@ -88,8 +94,10 @@ void Material::PrepareMaterial(std::shared_ptr<Transform> transform, std::shared
 
 	// send data to the pixel shader
 	ps->SetFloat3("colorTint", DirectX::XMFLOAT3(colorTint.x, colorTint.y, colorTint.z));
-	ps->SetFloat("roughness", roughness);
 	ps->SetFloat3("cameraPosition", camera->GetTransform()->GetPosition());
+	ps->SetFloat("roughness", roughness);
+	ps->SetFloat2("uvScale", uvScale);
+	ps->SetFloat2("uvOffset", uvOffset);
 	ps->CopyAllBufferData();
 
 	// loop through shader resource views and sampler states
@@ -105,5 +113,25 @@ void Material::AddTextureSRV(std::string _name, Microsoft::WRL::ComPtr<ID3D11Sha
 void Material::AddSampler(std::string _name, Microsoft::WRL::ComPtr<ID3D11SamplerState> _sampler)
 {
 	samplers.insert({_name, _sampler});
+}
+
+DirectX::XMFLOAT2 Material::GetUVOffset()
+{
+	return uvOffset;
+}
+
+void Material::SetUVOffset(DirectX::XMFLOAT2 offset)
+{
+	uvOffset = offset;
+}
+
+DirectX::XMFLOAT2 Material::GetUVScale()
+{
+	return uvScale;
+}
+
+void Material::SetUVScale(DirectX::XMFLOAT2 scale)
+{
+	uvScale = scale;
 }
 

@@ -28,6 +28,9 @@ using namespace DirectX;
 XMFLOAT4 _color(0.5f, 0.0f, 0.5f, 1.0f);
 XMFLOAT4 _colorTint(1.0f, 1.0f, 1.0f, 1.0f);
 XMFLOAT3 _offset(0.0f, 0.0f, 0.0f);
+XMFLOAT2 _uvScale(0.0f, 0.0f);
+XMFLOAT2 _uvOffset(0.0f, 0.0f);
+
 static bool demoActive;
 
 // --------------------------------------------------------
@@ -344,7 +347,7 @@ void Game::CreateLights()
 	dir2.type = LIGHT_TYPE_DIRECTIONAL;
 	dir2.intensity = 1.0f;
 	dir2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
-	dir2.direction = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+	dir2.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
 
 	Light dir3 = {};
 	dir3.type = LIGHT_TYPE_DIRECTIONAL;
@@ -374,7 +377,7 @@ void Game::CreateLights()
 	spot.intensity = 1.0f;
 	spot.position = XMFLOAT3(6.0f, 1.5f, 0.0f);
 	spot.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	spot.range = 1.0f;
+	spot.range = 5.0f;
 	spot.spotOuterAngle = XMConvertToRadians(20.0f);
 	spot.spotInnerAngle = XMConvertToRadians(10.0f);
 
@@ -414,6 +417,7 @@ void Game::CreateMaterials()
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> test;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tx2;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> spec;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> spec2;
 	// Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(), 0, test
 	HRESULT res = CreateWICTextureFromFile(
 		Graphics::Device.Get(),
@@ -429,25 +433,46 @@ void Game::CreateMaterials()
 		0,
 		&tx2
 	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Specular Maps/brokentiles_specular.png").c_str(),
+		0,
+		&spec
+	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Specular Maps/rustymetal_specular.png").c_str(),
+		0,
+		&spec2
+	);
+
 
 	//0
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 		0.0f,
 		vertexShader,
-		pixelShader
+		pixelShader,
+		XMFLOAT2(1.0f, 1.0f),
+		XMFLOAT2(0.0f, 0.0f)
 	));
 	materials[0]->AddTextureSRV("SurfaceTexture", test);
 	materials[0]->AddSampler("BasicSampler", sampler);
+	materials[0]->AddTextureSRV("SpecularMap", spec);
 	//1
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
 		1.0f,
 		vertexShader,
-		pixelShader
+		pixelShader,
+		XMFLOAT2(1.0f, 1.0f),
+		XMFLOAT2(0.0f, 0.0f)
 	));
 	materials[1]->AddTextureSRV("SurfaceTexture", tx2);
 	materials[1]->AddSampler("BasicSampler", sampler);
+	materials[1]->AddTextureSRV("SpecularMap", spec2);
 	//2
 	//materials.push_back(std::make_shared<Material>(
 	//	DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
@@ -564,8 +589,6 @@ void Game::BuildGui()
 		ImGui::TreePop();
 	}
 
-	
-
 	if (ImGui::TreeNode("Game Entity Controls")) {
 		int i = 0;
 		for (auto& e : entities) {
@@ -668,6 +691,25 @@ void Game::BuildGui()
 		ImGui::TreePop();
 	}
 	
+	if (ImGui::TreeNode("Materials")) {
+		int i = 1000;
+
+		for (auto& m : materials) {
+			ImGui::PushID(i);
+
+			DirectX::XMFLOAT2 offset = m->GetUVOffset();
+			DirectX::XMFLOAT2 scale = m->GetUVScale();
+			ImGui::DragFloat2("UV Offset", &offset.x, 0.1f);
+			ImGui::DragFloat2("UV Scale", &scale.x, 0.1f);
+			m->SetUVOffset(offset);
+			m->SetUVScale(scale);
+
+			ImGui::PopID();
+			i++;
+		}
+		ImGui::TreePop();
+	}
+
 	ImGui::End();
 }
 
@@ -763,12 +805,12 @@ void Game::Draw(float deltaTime, float totalTime)
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
 	for (auto& g : entities) {
-		g->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambient);
 		g->GetMaterial()->GetPixelShader()->SetData(
 			"lights", 
 			&lights[0],
 			sizeof(Light) * (int)lights.size()
 		);
+		g->GetMaterial()->GetPixelShader()->SetFloat3("ambient", ambient);
 		g->Draw(_colorTint, cameras[curCamera]);
 	}
 	

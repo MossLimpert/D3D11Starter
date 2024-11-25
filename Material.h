@@ -18,9 +18,12 @@ private:
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView>> textureSRVs;
 	std::unordered_map<std::string, Microsoft::WRL::ComPtr<ID3D11SamplerState>> samplers;
 
+	DirectX::XMFLOAT2 uvScale;
+	DirectX::XMFLOAT2 uvOffset;
+
 public:
-	Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath);
-	Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps);
+	Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset);
+	Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset);
 	~Material();
 	Material(Material& m);
 
@@ -37,5 +40,10 @@ public:
 	void PrepareMaterial(std::shared_ptr<Transform> transform, std::shared_ptr<Camera> camera);
 	void AddTextureSRV(std::string _name, Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> _srv);
 	void AddSampler(std::string _name, Microsoft::WRL::ComPtr<ID3D11SamplerState> _sampler);
+
+	DirectX::XMFLOAT2 GetUVOffset();
+	void SetUVOffset(DirectX::XMFLOAT2 offset);
+	DirectX::XMFLOAT2 GetUVScale();
+	void SetUVScale(DirectX::XMFLOAT2 scale);
 };
 
