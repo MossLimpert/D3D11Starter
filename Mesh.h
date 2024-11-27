@@ -75,5 +75,14 @@ private:
 	/// <param name="indexArray">index array</param>
 	/// <param name="numIndices">number of indices</param>
 	void CreateBuffers(Vertex* vertArray, size_t numVerts, unsigned int* indexArray, size_t numIndices);
+
+	/// <summary>
+	/// Calculates Vertex tangents oriented towards the U direction of uvs
+	/// </summary>
+	/// <param name="verts">vertices</param>
+	/// <param name="numVerts">number of vertices</param>
+	/// <param name="indices">indices</param>
+	/// <param name="numIndices">number of indices</param>
+	void CalculateTangents(Vertex* verts, int numVerts, unsigned int* indices, int numIndices);
 };
 

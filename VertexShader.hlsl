@@ -36,10 +36,8 @@ VertexToPixel main( VertexShaderInput input )
 		float4(input.localPosition, 1.0f)
 	);
 
-	// Pass the color through 
-	// - The values will be interpolated per-pixel by the rasterizer
-	// - We don't need to alter it here, but we do need to send it to the pixel shader
-	//output.color = colorTint;
+	// pass tangetn through ASSIGNMENT 10
+	
 	
 	// pass uv and normal through ASSIGNMENT 7
     output.uv = input.uv;

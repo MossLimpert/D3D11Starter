@@ -11,5 +11,6 @@ struct Vertex
 {
 	DirectX::XMFLOAT3 Position;	    // The local position of the vertex
 	DirectX::XMFLOAT3 Normal;       // The color of the vertex
+	DirectX::XMFLOAT3 Tangent;		// tangent oriented to U of uv
 	DirectX::XMFLOAT2 UV;			// uv texture coordinate
 };

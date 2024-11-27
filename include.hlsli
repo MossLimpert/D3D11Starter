@@ -29,10 +29,11 @@ struct VertexToPixel
 	//  |   Name          Semantic
 	//  |    |                |
 	//  v    v                v
-    float4 screenPosition : SV_POSITION;
-    float3 normal : NORMAL;
-    float3 worldPosition : POSITION;
-    float2 uv : TEXCOORD;
+    float4 screenPosition   : SV_POSITION;
+    float3 normal           : NORMAL;
+    float3 worldPosition    : POSITION;
+    float3 tangent          : TANGENT;
+    float2 uv               : TEXCOORD;
 };
 
 // Struct representing a single vertex worth of data
@@ -47,9 +48,10 @@ struct VertexShaderInput
 	//  |   Name          Semantic
 	//  |    |                |
 	//  v    v                v
-    float3 localPosition : POSITION; // XYZ position
-    float3 normal : NORMAL; // normal 
-    float2 uv : TEXCOORD; // uv
+    float3 localPosition    : POSITION; // XYZ position
+    float3 normal           : NORMAL; // normal 
+    float3 tangent          : TANGENT;
+    float2 uv               : TEXCOORD; // uv
 };
 
 // helper functions referenced from demo
