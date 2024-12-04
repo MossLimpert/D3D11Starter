@@ -168,4 +168,97 @@ float DiffusePBR(float3 normal, float3 dirToLight)
     return saturate(dot(normal, dirToLight));
 }
 
+// calculates diffuse based on energy conservation
+// diffuse      - diffuse amount
+// f            - fresnel result from microfacet brdf
+// metalness    - metalness amt
+float3 DiffuseEnergyConserve(float3 diffuse, float3 F, float metalness)
+{
+    return diffuse * (1 - F) * (1 - metalness);
+}
+
+// normal distribution function
+// ggx Trowbridge-Reitz
+// a - roughness  
+// h - half vector
+// n - normal
+// D(h , n, a) = a^2 / pi * ((n dot h)^2 * (a^2 - 1) + 1)^2
+float D_GGX(float3 n, float3 h, float3 roughness)
+{
+    // pre calculation work
+    float NdotH = saturate(dot(n, h));
+    float NdotH2 = NdotH * NdotH;
+    float a = roughness * roughness;
+    float a2 = max(a * a, MIN_ROUGHNESS);
+    
+    // ((n dot h)^2 * (a^2 - 1) + 1)
+    // can go to 0 if roughness is 0 and ndoth is 1, use MIN_ROUGHNESS
+    float denomToSquare = NdotH2 * (a2 - 1) + 1;
+    
+    return a2 / (PI * denomToSquare * denomToSquare);
+}
+
+// Fresnel term - Schlick approximation
+// v - view vector
+// h - half vector
+// f0 - value when 1 = n
+// F(v , h, f0) = f0 + (1-F0)(1- (v dot h))^5
+float3 F_Schlick(float3 v, float3 h, float3 f0)
+{
+    // pre calc
+    float VdotH = saturate(dot(v, h));
+    
+    return f0 + (1 - f0) * pow(1 - VdotH, 5);
+}
+
+// Geometric Shadowing - Schlick GGX 
+// k becomes a / 2, roughness becomes (r + 1)/2 before squaring
+// n - normal
+// v - view vector
+// G_Schlick(n, v, a) = (n dot v) / ((n dot v) * (1-k ) * k )
+// full G(n, v, l, a) term = G_SchlickGGX(n,v,a) * G_SchlickGGX(n,l,a)
+float G_SchlickGGX(float3 n, float3 v, float roughness)
+{
+    float k = pow(roughness + 1, 2) / 8.0f;
+    float NdotV = saturate(dot(n, v));
+    
+    // numerator should be NdotV (or NdotL)
+    // but they also are in BRDF denominator, so they cancel out
+    // we leave them out here and in BRDF 
+    // because if we leave them in the dot products get small and cause 
+    // rounding errors
+    return 1 / (NdotV * (1 - k) + k);
+}
+
+// Cook-torrance Microfacet BRDF (Specular)
+// f(l,v) = D(h)F(v,h)G(l,v,h) / 4 (n dot l )(n dot v)
+// parts of denominator are canceled out by numerator
+// D() - normal distribution func Trowbridge-Reitz GGX
+// F() - Fresnel - Schlick approximation
+// G() - Geometric Shadowing - Schlick GGX 
+float3 MicroFacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 specColor, float3 out F_out)
+{
+    // other vectors
+    float3 h = normalize(v + l);
+    
+    // run numerator funcs
+    float D = D_GGX(n, h, roughness);
+    float3 F = F_Schlick(v, h, F0_NON_METAL);
+    float G = G_SchlickGGX(n, v, roughness) * G_SchlickGGX(n, l, roughness);
+    
+    // pass F out of the function for diffuse balance?
+    F_out = F;
+    
+    // final formula
+    
+    // denominator *should* contain ndotv and ndotl but 
+    // theyd be cancelled out by our G term, so they've been 
+    // removed in both spots to prevent float rounding errors
+    float3 specularResult = (D * F * G) / 4;
+    
+    // according to the rendering equation
+    // specular must have the same ndotl applied as diffuse
+    // apply that here
+    return specularResult * max(dot(n, l), 0);
+}
 #endif
