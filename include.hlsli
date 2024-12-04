@@ -6,6 +6,13 @@
 #define LIGHT_TYPE_SPOT 2
 #define MAX_SPECULAR_EXPONENT 256.0f
 
+// constant Fresnel value for non-metals (glass and plastic are about 0.04)
+static const float F0_NON_METAL = 0.04f;
+
+// minimum roughness, for when specular distrib func denominator goes to 0
+static const float MIN_ROUGHNESS = 0.0000001f;
+
+static const float PI = 3.14159265359f;
 
 struct Light
 {
@@ -149,6 +156,16 @@ float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, flo
     // combine with point light calc
     // idgaf about optimization ;9
     return PointLight(light, normal, worldPos, camPos, roughness, surfaceColor, specular) * spotTerm;
+}
+
+//
+//
+// PBR FUNCTIONS
+
+// lambert diffuse brdf. assumes vectors are NORMALIZED!
+float DiffusePBR(float3 normal, float3 dirToLight)
+{
+    return saturate(dot(normal, dirToLight));
 }
 
 #endif
