@@ -1,8 +1,5 @@
 #include "Sky.h"
 #include "Graphics.h"
-//#include "packages/directxtk_desktop_win10.2024.10.29.1/include/WICTextureLoader.h"
-//#include "packages/directxtk_desktop_win10.2024.10.29.1/include/DDSTextureLoader.h"
-//#include "packages/directxtk_desktop_win10.2024.10.29.1/include/WICTextureLoader.h"
 #include "WICTextureLoader.h"
 #include "DDSTextureLoader.h"
 
