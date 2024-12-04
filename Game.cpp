@@ -10,8 +10,7 @@
 #include "Mesh.h"
 #include "BufferStructs.h"		// Assignment 4
 #include "Material.h"			// Assignment 7
-#include "packages/directxtk_desktop_win10.2024.10.29.1/include/WICTextureLoader.h"
-
+#include "WICTextureLoader.h"
 #include <DirectXMath.h>
 
 // Needed for a helper function to load pre-compiled shader files
