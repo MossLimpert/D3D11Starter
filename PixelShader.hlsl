@@ -42,7 +42,8 @@ float4 main(VertexToPixel input) : SV_TARGET
     input.uv = input.uv * uvScale + uvOffset;
     
     // get the texture color at given uv coords, apply tint and ambient
-    float3 curColor = SurfaceTexture.Sample(BasicSampler, input.uv).rgb;
+    // undoing gamma correction (added back on final line in main)
+    float3 curColor = pow(SurfaceTexture.Sample(BasicSampler, input.uv).rgb, 2.2f);
     curColor *= colorTint;
     
     // get specular value for this pixel
@@ -92,5 +93,6 @@ float4 main(VertexToPixel input) : SV_TARGET
         }
     }
     
-    return float4(totalLight, 1);
+    // with gamma correction
+    return float4(pow(totalLight, 1.0f / 2.2f), 1);
 }
