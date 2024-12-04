@@ -21,6 +21,7 @@ cbuffer ExternalData : register(b0)
 Texture2D SurfaceTexture    : register(t0); // t is registers for textures
 SamplerState BasicSampler   : register(s0); // s is registers for samplers
 Texture2D SpecularMap       : register(t1);
+Texture2D NormalMap         : register(t2);
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -45,6 +46,21 @@ float4 main(VertexToPixel input) : SV_TARGET
     
     // get specular value for this pixel
     float specular = SpecularMap.Sample(BasicSampler, input.uv).r;
+    
+    // assignment 10
+    // get the normal map normal
+    float3 unpackedNormal = NormalMap.Sample(BasicSampler, input.uv).rgb * 2 - 1;
+    unpackedNormal = normalize(unpackedNormal);
+    
+    // create the tbn matrix
+    float3 N = input.normal; // its already normalized above
+    float3 T = normalize(input.tangent);
+    T = normalize(T - N * dot(T, N));
+    float3 B = cross(T, N);
+    float3x3 TBN = float3x3(T, B, N);
+    
+    // transform the unpacked normal
+    input.normal = mul(unpackedNormal, TBN);    // multiplication order important
     
     float3 totalLight = ambient * curColor;
     

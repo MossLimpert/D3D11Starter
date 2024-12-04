@@ -413,12 +413,18 @@ void Game::CreateMaterials()
 	desc.MaxLOD = D3D11_FLOAT32_MAX;	// mip mapping at any range
 	HRESULT stateCheck = Graphics::Device->CreateSamplerState(&desc, sampler.GetAddressOf());
 
-
+	// declare textures
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> test;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tx2;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> spec;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> spec2;
-	// Graphics::Device.Get(), Graphics::Context.Get(), FixPath(L"../../textures/Specular Maps/brokentiles.png").c_str(), 0, test
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tx_n_1;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> tx_n_2;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> nm_1;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> nm_2;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> flatNormal;
+
+	// fill textures
 	HRESULT res = CreateWICTextureFromFile(
 		Graphics::Device.Get(),
 		Graphics::Context.Get(),
@@ -447,8 +453,43 @@ void Game::CreateMaterials()
 		0,
 		&spec2
 	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Normal Maps/cushion.png").c_str(),
+		0,
+		&tx_n_1
+	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Normal Maps/rock.png").c_str(),
+		0,
+		&tx_n_2
+	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Normal Maps/cushion_normals.png").c_str(),
+		0,
+		&nm_1
+	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Normal Maps/rock_normals.png").c_str(),
+		0,
+		&nm_2
+	);
+	CreateWICTextureFromFile(
+		Graphics::Device.Get(),
+		Graphics::Context.Get(),
+		FixPath(L"../../textures/Normal Maps/flat_normals.png").c_str(),
+		0,
+		&flatNormal
+	);
 
-
+	// make materials
 	//0
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
@@ -458,9 +499,11 @@ void Game::CreateMaterials()
 		XMFLOAT2(1.0f, 1.0f),
 		XMFLOAT2(0.0f, 0.0f)
 	));
-	materials[0]->AddTextureSRV("SurfaceTexture", test);
+	materials[0]->AddTextureSRV("SurfaceTexture", tx_n_1);
 	materials[0]->AddSampler("BasicSampler", sampler);
-	materials[0]->AddTextureSRV("SpecularMap", spec);
+	materials[0]->AddTextureSRV("NormalMap", nm_1);
+	//materials[0]->AddTextureSRV("SpecularMap", spec);
+	
 	//1
 	materials.push_back(std::make_shared<Material>(
 		DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
@@ -470,37 +513,12 @@ void Game::CreateMaterials()
 		XMFLOAT2(1.0f, 1.0f),
 		XMFLOAT2(0.0f, 0.0f)
 	));
-	materials[1]->AddTextureSRV("SurfaceTexture", tx2);
+	materials[1]->AddTextureSRV("SurfaceTexture", tx_n_2);
 	materials[1]->AddSampler("BasicSampler", sampler);
-	materials[1]->AddTextureSRV("SpecularMap", spec2);
-	//2
-	//materials.push_back(std::make_shared<Material>(
-	//	DirectX::XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f),
-	//	0.5f,
-	//	vertexShader,
-	//	pixelShader
-	//));
-	////3
-	//materials.push_back(std::make_shared<Material>(
-	//	DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-	//	0.2f,
-	//	vertexShader,
-	//	uvPS
-	//));
-	////4
-	//materials.push_back(std::make_shared<Material>(
-	//	DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 0.0f),
-	//	0.1f,
-	//	vertexShader,
-	//	normalsPS
-	//));
-	////5
-	//materials.push_back(std::make_shared<Material>(
-	//	DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f),
-	//	0.0f,
-	//	vertexShader,
-	//	pseudoPS
-	//));
+	materials[1]->AddTextureSRV("NormalMap", nm_2);
+	//materials[1]->AddTextureSRV("SpecularMap", spec2);
+
+	
 }
 
 /// <summary>

@@ -37,7 +37,9 @@ VertexToPixel main( VertexShaderInput input )
 	);
 
 	// pass tangetn through ASSIGNMENT 10
-	
+	// follow the steps we did with the normal, except with world instead of 
+	// world inverse transpose. 
+    output.tangent = mul((float3x3) world, input.tangent);
 	
 	// pass uv and normal through ASSIGNMENT 7
     output.uv = input.uv;
