@@ -199,31 +199,6 @@ void Game::CreateGeometry()
 	entities[5]->GetTransform()->MoveAbsolute(6, 0, 0);
 	entities[6]->GetTransform()->MoveAbsolute(9, 0, 0);
 
-	/*entities[7]->GetTransform()->MoveAbsolute(-9, 3, 0);
-	entities[8]->GetTransform()->MoveAbsolute(-6, 3, 0);
-	entities[9]->GetTransform()->MoveAbsolute(-3, 3, 0);
-	entities[10]->GetTransform()->MoveAbsolute(0, 3, 0);
-	entities[11]->GetTransform()->MoveAbsolute(3, 3, 0);
-	entities[12]->GetTransform()->MoveAbsolute(6, 3, 0);
-	entities[13]->GetTransform()->MoveAbsolute(9, 3, 0);
-
-	entities[14]->GetTransform()->MoveAbsolute(-9, 6, 0);
-	entities[15]->GetTransform()->MoveAbsolute(-6, 6, 0);
-	entities[16]->GetTransform()->MoveAbsolute(-3, 6, 0);
-	entities[17]->GetTransform()->MoveAbsolute(0, 6, 0);
-	entities[18]->GetTransform()->MoveAbsolute(3, 6, 0);
-	entities[19]->GetTransform()->MoveAbsolute(6, 6, 0);
-	entities[20]->GetTransform()->MoveAbsolute(9, 6, 0);
-
-	entities[21]->GetTransform()->MoveAbsolute(-9, -3, 0);
-	entities[22]->GetTransform()->MoveAbsolute(-6, -3, 0);
-	entities[23]->GetTransform()->MoveAbsolute(-3, -3, 0);
-	entities[24]->GetTransform()->MoveAbsolute(0, -3, 0);
-	entities[25]->GetTransform()->MoveAbsolute(3, -3, 0);
-	entities[26]->GetTransform()->MoveAbsolute(6, -3, 0);
-	entities[27]->GetTransform()->MoveAbsolute(9, -3, 0);*/
-
-
 }
 
 void Game::CreateLights()
@@ -412,7 +387,7 @@ void Game::CreateMaterials()
 	materials[1]->AddTextureSRV("NormalMap", nm_2);
 	//materials[1]->AddTextureSRV("SpecularMap", spec2);
 
-	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
+	/*std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
 	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
 
 	sky = std::make_shared<Sky>(
@@ -426,7 +401,7 @@ void Game::CreateMaterials()
 		skyVS,
 		skyPS,
 		sampler
-	);
+	);*/
 	
 }
 
@@ -743,7 +718,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	}
 	
 	// sky
-	sky->Draw(cameras[curCamera]);
+	//sky->Draw(cameras[curCamera]);
 
 	//
 	// IMGUI
