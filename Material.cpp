@@ -3,7 +3,7 @@
 
 
 
-Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset)
+Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WRL::ComPtr<ID3D11Device> device, Microsoft::WRL::ComPtr<ID3D11DeviceContext> context, LPCWSTR vsPath, LPCWSTR psPath, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset, int useSpecularMap)
 {
 	this->colorTint = _colorTint;
 	this->roughness = _roughness;
@@ -11,9 +11,10 @@ Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, Microsoft::WR
 	this->ps = std::make_shared<SimplePixelShader>(device, context, psPath);
 	this->uvScale = scale;
 	this->uvOffset = offset;
+	this->useSpecularMap = useSpecularMap;
 }
 
-Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset)
+Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_ptr<SimpleVertexShader> _vs, std::shared_ptr<SimplePixelShader> _ps, DirectX::XMFLOAT2 scale, DirectX::XMFLOAT2 offset, int useSpecularMap)
 {
 	this->colorTint = _colorTint;
 	this->roughness = _roughness;
@@ -21,6 +22,7 @@ Material::Material(DirectX::XMFLOAT4 _colorTint, float _roughness, std::shared_p
 	this->ps = _ps;
 	this->uvScale = scale;
 	this->uvOffset = offset;
+	this->useSpecularMap = useSpecularMap;
 }
 
 Material::~Material()
@@ -35,6 +37,7 @@ Material::Material(Material& m)
 	this->roughness = m.roughness;
 	this->uvScale = m.uvScale;
 	this->uvOffset = m.uvOffset;
+	this->useSpecularMap = m.useSpecularMap;
 }
 
 DirectX::XMFLOAT4 Material::GetColorTint()
@@ -98,6 +101,7 @@ void Material::PrepareMaterial(std::shared_ptr<Transform> transform, std::shared
 	ps->SetFloat("roughness", roughness);
 	ps->SetFloat2("uvScale", uvScale);
 	ps->SetFloat2("uvOffset", uvOffset);
+	ps->SetInt("useSpecularMap", useSpecularMap);
 	ps->CopyAllBufferData();
 
 	// loop through shader resource views and sampler states

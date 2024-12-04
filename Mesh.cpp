@@ -222,29 +222,6 @@ Mesh::Mesh(const char* name, const std::wstring& filePath)
 	// Close the file and create the actual buffers
 	obj.close();
 
-	// trying to fix uninitiallized vars problem
-	// 
-	// 
-	//this->indices = indcs[0];
-	//this->indexBuff = &indcs[0];
-	//this->verts = vertCounter;
-
-	// - At this point, "verts" is a vector of Vertex structs, and can be used
-	//    directly to create a vertex buffer:  &verts[0] is the address of the first vert
-	//
-	//this->vertBuff = &verts[0];
-	// - The vector "indices" is similar. It's a vector of unsigned ints and
-	//    can be used directly for the index buffer: &indices[0] is the address of the first int
-	//
-	//
-	// - "vertCounter" is the number of vertices
-	// - "indexCounter" is the number of indices
-	// - Yes, these are effectively the same since OBJs do not index entire vertices!  This means
-	//    an index buffer isn't doing much for us.  We could try to optimize the mesh ourselves
-	//    and detect duplicate vertices, but at that point it would be better to use a more
-	//    sophisticated model loading library like TinyOBJLoader or The Open Asset Importer Library
-
-	
 }
 
 // --------------------------------------------------------

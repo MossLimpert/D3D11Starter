@@ -13,6 +13,7 @@ cbuffer ExternalData : register(b0)
     
     float2 uvScale;
     float2 uvOffset;
+    int useSpecularMap;
     
 }
 
@@ -45,7 +46,11 @@ float4 main(VertexToPixel input) : SV_TARGET
     curColor *= colorTint;
     
     // get specular value for this pixel
-    float specular = SpecularMap.Sample(BasicSampler, input.uv).r;
+    float specularScale = 1.0f;
+    if (useSpecularMap)
+    {
+        specularScale = SpecularMap.Sample(BasicSampler, input.uv).r;
+    }
     
     // assignment 10
     // get the normal map normal
@@ -74,15 +79,15 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case LIGHT_TYPE_DIRECTIONAL:
-                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specular);
+                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specularScale);
                 break;
             
             case LIGHT_TYPE_POINT:
-                totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specular);
+                totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specularScale);
                 break;
             
             case LIGHT_TYPE_SPOT:
-                totalLight += SpotLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specular);
+                totalLight += SpotLight(light, input.normal, input.worldPosition, camPos, roughness, colorTint, specularScale);
                 break;
         }
     }

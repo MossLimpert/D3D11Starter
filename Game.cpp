@@ -43,7 +43,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
-	ambient = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
+	ambient = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
 	InitializeCamera();
 
 	//lights = std::vector<Light>();
@@ -188,114 +188,6 @@ void Game::CreateGeometry()
 			torus,
 			materials[0]
 		));
-	// 2
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		sph,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cube,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cyllinder,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		helix,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		quad,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		doubleSide,
-	//		materials[3]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		torus,
-	//		materials[3]
-	//	));
-	////3
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		sph,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cube,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cyllinder,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		helix,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		quad,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		doubleSide,
-	//		materials[4]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		torus,
-	//		materials[4]
-	//	));
-	//// 4
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		sph,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cube,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		cyllinder,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		helix,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		quad,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		doubleSide,
-	//		materials[5]
-	//	));
-	//entities.push_back(
-	//	std::make_shared<GameEntity>(
-	//		torus,
-	//		materials[5]
-	//	));
 
 
 	// transforms
@@ -497,7 +389,8 @@ void Game::CreateMaterials()
 		vertexShader,
 		pixelShader,
 		XMFLOAT2(1.0f, 1.0f),
-		XMFLOAT2(0.0f, 0.0f)
+		XMFLOAT2(0.0f, 0.0f),
+		0
 	));
 	materials[0]->AddTextureSRV("SurfaceTexture", tx_n_1);
 	materials[0]->AddSampler("BasicSampler", sampler);
@@ -511,15 +404,32 @@ void Game::CreateMaterials()
 		vertexShader,
 		pixelShader,
 		XMFLOAT2(1.0f, 1.0f),
-		XMFLOAT2(0.0f, 0.0f)
+		XMFLOAT2(0.0f, 0.0f),
+		0
 	));
 	materials[1]->AddTextureSRV("SurfaceTexture", tx_n_2);
 	materials[1]->AddSampler("BasicSampler", sampler);
 	materials[1]->AddTextureSRV("NormalMap", nm_2);
 	//materials[1]->AddTextureSRV("SpecularMap", spec2);
 
+	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
+	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
+
+	sky = std::make_shared<Sky>(
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../../textures/Skies/right.png").c_str(),
+		entities[1]->GetMesh(),
+		skyVS,
+		skyPS,
+		sampler
+	);
 	
 }
+
 
 /// <summary>
 /// Updates ImGUI
@@ -832,6 +742,8 @@ void Game::Draw(float deltaTime, float totalTime)
 		g->Draw(_colorTint, cameras[curCamera]);
 	}
 	
+	// sky
+	sky->Draw(cameras[curCamera]);
 
 	//
 	// IMGUI

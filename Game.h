@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "SimpleShader.h"
 #include "Lights.h"
+#include "Sky.h"
 
 class Game
 {
@@ -53,6 +54,7 @@ private:
 
 	int curCamera;
 	DirectX::XMFLOAT3 ambient;
+	std::shared_ptr<Sky> sky;
 
 	// Shaders and shader-related constructs
 	std::shared_ptr<SimplePixelShader> pixelShader;
