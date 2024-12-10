@@ -53,7 +53,7 @@ Sky::Sky(const wchar_t* right, const wchar_t* left, const wchar_t* up, const wch
 
 	InitRenderStates();
 
-	// create texture out of 6 images
+	// create texture out of the 6 images
 	skySRV = CreateCubemap(right, left, up, down, front, back);
 }
 

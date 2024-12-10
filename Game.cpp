@@ -390,14 +390,18 @@ void Game::CreateMaterials()
 	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
 	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
 
+	std::shared_ptr<Mesh> cube = std::make_shared<Mesh>("cube",
+		FixPath(L"../../meshes/cube.obj").c_str()
+	);
+
 	sky = std::make_shared<Sky>(
 		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		entities[1]->GetMesh(),
+		FixPath(L"../../../textures/Skies/left.png").c_str(),
+		FixPath(L"../../../textures/Skies/up.png").c_str(),
+		FixPath(L"../../../textures/Skies/down.png").c_str(),
+		FixPath(L"../../../textures/Skies/front.png").c_str(),
+		FixPath(L"../../../textures/Skies/back.png").c_str(),
+		cube,
 		skyVS,
 		skyPS,
 		sampler
