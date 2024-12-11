@@ -23,12 +23,8 @@ cbuffer ExternalData : register(b0)
 Texture2D Albedo : register(t0);
 Texture2D NormalMap : register(t1);
 Texture2D RoughnessMap : register(t2);
-Texture2D MetalnessMap : register(t3);
-
-//Texture2D SurfaceTexture    : register(t0); // t is registers for textures
+Texture2D MetalnessMap : register(t3);      // t is registers for textures
 SamplerState BasicSampler   : register(s0); // s is registers for samplers
-//Texture2D SpecularMap       : register(t1);
-//Texture2D NormalMap         : register(t2);
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -77,9 +73,14 @@ float4 main(VertexToPixel input) : SV_TARGET
     
     // assignment 11
     // specular 
+    // Assume albedo texture is actually holding specular color 
+    // where metalness == 1 
+    // Note the use of lerp here - metal is generally 0 or 1, 
+    // but might be in between because of linear texture sampling, 
+    // so we lerp the specular color to match
     float3 specColor = lerp(F0_NON_METAL, curColor.rgb, metalness);
     
-    float3 totalLight = ambient * curColor;
+    float3 totalLight = curColor;
     
     // loop through lights and apply
     for (int i = 0; i < NUM_LIGHTS; i++)

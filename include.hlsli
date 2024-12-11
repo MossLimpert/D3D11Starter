@@ -184,7 +184,7 @@ float G_SchlickGGX(float3 n, float3 v, float roughness)
 // D() - normal distribution func Trowbridge-Reitz GGX
 // F() - Fresnel - Schlick approximation
 // G() - Geometric Shadowing - Schlick GGX 
-float3 MicroFacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 specColor, float3 out F_out)
+float3 MicroFacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 specColor, out float3 F_out)
 {
     // other vectors
     float3 h = normalize(v + l);
