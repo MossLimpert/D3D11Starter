@@ -43,7 +43,7 @@ void Game::Initialize()
 	// 
 	demoActive = false;
 	curCamera = 0;
-	ambient = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	ambient = DirectX::XMFLOAT3(0.08f, 0.1f, 0.14f);
 	InitializeCamera();
 
 	//lights = std::vector<Light>();
@@ -395,12 +395,12 @@ void Game::CreateMaterials()
 	);
 
 	sky = std::make_shared<Sky>(
-		FixPath(L"../../../textures/Skies/right.png").c_str(),
-		FixPath(L"../../../textures/Skies/left.png").c_str(),
-		FixPath(L"../../../textures/Skies/up.png").c_str(),
-		FixPath(L"../../../textures/Skies/down.png").c_str(),
-		FixPath(L"../../../textures/Skies/front.png").c_str(),
-		FixPath(L"../../../textures/Skies/back.png").c_str(),
+		FixPath(L"../../textures/Skies/right.png").c_str(),
+		FixPath(L"../../textures/Skies/left.png").c_str(),
+		FixPath(L"../../textures/Skies/up.png").c_str(),
+		FixPath(L"../../textures/Skies/down.png").c_str(),
+		FixPath(L"../../textures/Skies/front.png").c_str(),
+		FixPath(L"../../textures/Skies/back.png").c_str(),
 		cube,
 		skyVS,
 		skyPS,
