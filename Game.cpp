@@ -387,7 +387,7 @@ void Game::CreateMaterials()
 	materials[1]->AddTextureSRV("NormalMap", nm_2);
 	//materials[1]->AddTextureSRV("SpecularMap", spec2);
 
-	std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
+	/*std::shared_ptr<SimpleVertexShader> skyVS = std::make_shared<SimpleVertexShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyVS.cso").c_str());
 	std::shared_ptr<SimplePixelShader> skyPS = std::make_shared<SimplePixelShader>(Graphics::Device, Graphics::Context, FixPath(L"SkyPS.cso").c_str());
 
 	std::shared_ptr<Mesh> cube = std::make_shared<Mesh>("cube",
@@ -405,7 +405,7 @@ void Game::CreateMaterials()
 		skyVS,
 		skyPS,
 		sampler
-	);
+	);*/
 	
 }
 
@@ -722,7 +722,7 @@ void Game::Draw(float deltaTime, float totalTime)
 	}
 	
 	// sky
-	sky->Draw(cameras[curCamera]);
+	//sky->Draw(cameras[curCamera]);
 
 	//
 	// IMGUI
