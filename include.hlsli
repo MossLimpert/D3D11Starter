@@ -104,59 +104,7 @@ float SpecularBlinnPhong(float3 normal, float3 dirToLight, float3 toCamera, floa
     return roughness == 1 ? 0.0f : pow(max(dot(halfwayVector, normal), 0), (1 - roughness) * MAX_SPECULAR_EXPONENT);
 }
 
-// directional light calculation
-float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
-{
-    // get the normalized direction towards the light
-    float3 toLight = normalize(-light.direction);
-    float3 toCam = normalize(camPos - worldPos);
-    
-    // calculate the amount of diffuse and specular light, taking
-    // roughness into account for specular
-    float diff = Diffuse(normal, toLight);
-    float spec = SpecularPhong(normal, toLight, toCam, roughness) * specular;
-    
-    // combine
-    return (diff * surfaceColor + spec) * light.intensity * light.color;
 
-}
-
-// point light equation
-float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
-{
-    // light direction
-    float3 toLight = normalize(light.position - worldPos);
-    float3 toCam = normalize(camPos - worldPos);
-    
-    // calculate light amounts
-    float atten = Attenuate(light, worldPos);
-    float diff = Diffuse(normal, toLight);
-    float spec = SpecularPhong(normal, toLight, toCam, roughness) * specular;
-    
-    // combine
-    return (diff * surfaceColor + spec) * atten * light.intensity * light.color;
-}
-
-// spot light equation
-float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float3 surfaceColor, float specular)
-{
-    // spot falloff
-    float3 toLight = normalize(light.position - worldPos);
-    float pixelAngle = saturate(dot(-toLight, light.direction));
-    
-    // spot angle is the cosine of the angle from the dot product
-    // we need the cosine of these angles
-    float cosOuter = cos(light.spotOuterAngle);
-    float cosInner = cos(light.spotInnerAngle);
-    float falloffRange = cosOuter - cosInner;
-    
-    // linear falloff as pixel approaches outer range
-    float spotTerm = saturate((cosOuter - pixelAngle) / falloffRange);
-    
-    // combine with point light calc
-    // idgaf about optimization ;9
-    return PointLight(light, normal, worldPos, camPos, roughness, surfaceColor, specular) * spotTerm;
-}
 
 //
 //
@@ -261,4 +209,69 @@ float3 MicroFacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 spec
     // apply that here
     return specularResult * max(dot(n, l), 0);
 }
+
+// directional light calculation
+float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float metalness, float3 surfaceColor, float3 specular)
+{
+    // get the normalized direction towards the light
+    float3 toLight = normalize(-light.direction);
+    float3 toCam = normalize(camPos - worldPos);
+    
+    // calculate the amount of diffuse and specular light, taking
+    // roughness into account for specular
+    float diff = Diffuse(normal, toLight);
+    float3 F;
+    float spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
+    
+    // calculate diffuse with energy conservation
+    // reflected light does not get diffused
+    float3 balancedDiff = DiffuseEnergyConserve(diff, spec, metalness);
+    
+    // combine
+    return (balancedDiff * surfaceColor + spec) * light.intensity * light.color;
+
+}
+
+// point light equation
+float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float metalness, float3 surfaceColor, float3 specular)
+{
+    // light direction
+    float3 toLight = normalize(light.position - worldPos);
+    float3 toCam = normalize(camPos - worldPos);
+    
+    // calculate light amounts
+    float atten = Attenuate(light, worldPos);
+    float diff = Diffuse(normal, toLight);
+    float3 F;
+    float spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
+    
+    // diffuse with energy conservation - reflected light doesnt diffuse
+    float3 balancedDiff = DiffuseEnergyConserve(diff, specular, metalness);
+    
+    // combine
+    return (balancedDiff * surfaceColor + spec) * atten * light.intensity * light.color;
+}
+
+// spot light equation
+float3 SpotLight(Light light, float3 normal, float3 worldPos, float3 camPos, float roughness, float metalness, float3 surfaceColor, float3 specular)
+{
+    // spot falloff
+    float3 toLight = normalize(light.position - worldPos);
+    float pixelAngle = saturate(dot(-toLight, light.direction));
+    
+    // spot angle is the cosine of the angle from the dot product
+    // we need the cosine of these angles
+    float cosOuter = cos(light.spotOuterAngle);
+    float cosInner = cos(light.spotInnerAngle);
+    float falloffRange = cosOuter - cosInner;
+    
+    // linear falloff as pixel approaches outer range
+    float spotTerm = saturate((cosOuter - pixelAngle) / falloffRange);
+    
+    // combine with point light calc
+    // idgaf about optimization ;9
+    return PointLight(light, normal, worldPos, camPos, roughness, metalness, surfaceColor, specular) * spotTerm;
+}
+
+
 #endif
