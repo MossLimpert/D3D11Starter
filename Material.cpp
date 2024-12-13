@@ -97,7 +97,7 @@ void Material::PrepareMaterial(std::shared_ptr<Transform> transform, std::shared
 
 	// send data to the pixel shader
 	ps->SetFloat3("colorTint", DirectX::XMFLOAT3(colorTint.x, colorTint.y, colorTint.z));
-	ps->SetFloat3("cameraPos", camera->GetTransform()->GetPosition());
+	ps->SetFloat3("camPos", camera->GetTransform()->GetPosition());
 	ps->SetFloat("roughness", roughness);
 	ps->SetFloat2("uvScale", uvScale);
 	ps->SetFloat2("uvOffset", uvOffset);

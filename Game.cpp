@@ -32,6 +32,7 @@ XMFLOAT2 _uvScale(0.0f, 0.0f);
 XMFLOAT2 _uvOffset(0.0f, 0.0f);
 
 static bool demoActive;
+bool goingUp;
 
 // --------------------------------------------------------
 // Called once per program, after the window and graphics API
@@ -44,6 +45,7 @@ void Game::Initialize()
 	demoActive = false;
 	curCamera = 0;
 	ambient = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+	goingUp = true;
 	InitializeCamera();
 
 	//lights = std::vector<Light>();
@@ -189,6 +191,12 @@ void Game::CreateGeometry()
 			materials[6]
 		));
 
+	// floor
+	entities.push_back(
+		std::make_shared<GameEntity>(
+			cube,
+			materials[6]
+		));
 
 	// transforms
 	entities[0]->GetTransform()->MoveAbsolute(-9, 0, 0);
@@ -198,7 +206,9 @@ void Game::CreateGeometry()
 	entities[4]->GetTransform()->MoveAbsolute(3, 0, 0);
 	entities[5]->GetTransform()->MoveAbsolute(6, 0, 0);
 	entities[6]->GetTransform()->MoveAbsolute(9, 0, 0);
-
+	// scale up floor for assignment 12
+	entities[7]->GetTransform()->SetScale(XMFLOAT3(20, 20, 20));
+	entities[7]->GetTransform()->MoveAbsolute(0, -22, 0);
 }
 
 void Game::CreateLights()
@@ -206,21 +216,24 @@ void Game::CreateLights()
 	// directional lights
 	Light light = {};
 	light.type = LIGHT_TYPE_DIRECTIONAL;
-	light.direction = DirectX::XMFLOAT3(1.0f, -1.0f, 0.0f);
+	light.direction = DirectX::XMFLOAT3(1.0f, -1.0f, -1.0f);
 	light.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	light.intensity = 1.0f;
+	light.castsShadows = 1;
 
 	Light dir2 = {};
 	dir2.type = LIGHT_TYPE_DIRECTIONAL;
 	dir2.intensity = 1.0f;
 	dir2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dir2.direction = DirectX::XMFLOAT3(1.0f, 1.0f, 0.0f);
+	dir2.castsShadows = 0;
 
 	Light dir3 = {};
 	dir3.type = LIGHT_TYPE_DIRECTIONAL;
 	dir3.intensity = 1.0f;
 	dir3.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
 	dir3.direction = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+	dir3.castsShadows = 0;
 
 	// point lights
 	Light point1 = {};
@@ -229,6 +242,7 @@ void Game::CreateLights()
 	point1.intensity = 0.5f;
 	point1.position = DirectX::XMFLOAT3(0.0f, 1.5f, 0.0f);
 	point1.range = 1.0f;
+	point1.castsShadows = 0;
 
 	Light point2 = {};
 	point2.color = DirectX::XMFLOAT3(1.0f, 1.0f, 1.0f);
@@ -236,6 +250,7 @@ void Game::CreateLights()
 	point2.intensity = 0.5f;
 	point2.position = DirectX::XMFLOAT3(-3.0f, 1.0f, 0.0f);
 	point2.range = 1.0f;
+	point2.castsShadows = 0;
 
 	// spot light
 	Light spot = {};
@@ -247,6 +262,7 @@ void Game::CreateLights()
 	spot.range = 5.0f;
 	spot.spotOuterAngle = XMConvertToRadians(20.0f);
 	spot.spotInnerAngle = XMConvertToRadians(10.0f);
+	spot.castsShadows = 0;
 
 	// add to lights
 	lights.push_back(light);
@@ -676,10 +692,7 @@ void Game::GuiUpdate(float deltaTime)
 	// input capture
 	Input::SetKeyboardCapture(io.WantCaptureKeyboard);
 	Input::SetMouseCapture(io.WantCaptureMouse);
-
-	// show demo
-	//ImGui::ShowDemoWindow();
-
+	
 }
 
 void Game::BuildGui()
@@ -698,6 +711,8 @@ void Game::BuildGui()
 	//ImGui::DragFloat3("Offset: ", &_offset.x, 0.01f);
 	ImGui::ColorEdit4("ambient: ", &ambient.x);
 
+
+	//ImGui::Image(shadowSRV);
 	{
 		int i = 0;
 		for (auto& c : cameras) {
@@ -708,13 +723,11 @@ void Game::BuildGui()
 
 		ImGui::Text("Active Camera Information");
 		ImGui::Text("Name: %s", cameras[curCamera]->GetName());
-		//ImGui::Text("View Matrix"); ImGui::SameLine();
 		ImGui::Text("Field of View: %f", cameras[curCamera]->GetFov());
 		ImGui::Text("Near Clip: %f  |  Far Clip: %f", cameras[curCamera]->GetNearClip(), cameras[curCamera]->GetFarClip());
 		ImGui::Text("Movement Speed: %f", cameras[curCamera]->GetMvmtSpd());
 		ImGui::Text("Mouse Speed: %f", cameras[curCamera]->GetMouseSpd());
 		DirectX::XMFLOAT4X4 viewMat = cameras[curCamera]->GetView();
-		//ImGui::BeginTable("View: ", 4);
 		for (int row = 0; row < 4; row++) {
 			for (int column = 0; column < 4; column++) {
 				ImGui::Text(" %f |", viewMat.m[row][column]);
@@ -722,11 +735,7 @@ void Game::BuildGui()
 			}
 			ImGui::NewLine();
 		}
-		//ImGui::EndTable();
-		
-
 		ImGui::NewLine();
-
 	}
 
 	if (ImGui::TreeNode("Game Entity Information")) {
@@ -746,8 +755,6 @@ void Game::BuildGui()
 	if (ImGui::TreeNode("Game Entity Controls")) {
 		int i = 0;
 		for (auto& e : entities) {
-			//const char* name = "entity control for %d", i;
-			//ImGui::Begin(name);
 			ImGui::PushID(i);
 			ImGui::Text("Name: %s %d", e->GetMesh()->GetName(), i);
 			// position
@@ -765,7 +772,6 @@ void Game::BuildGui()
 
 			ImGui::NewLine();
 			ImGui::PopID();
-			//ImGui::End();
 			i++;
 		}
 		ImGui::TreePop();
@@ -871,7 +877,7 @@ void Game::InitializeCamera()
 {
 	float aR = (float)Window::Width() / Window::Height();
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>(aR, XMFLOAT3(0.5f, 0.5f, -5.0f), XMFLOAT3(0.0f, 0.5, 0.0f), DirectX::XM_PIDIV4, 0.01f, 100.0f, 3.0f, 0.002f, "camera 1");
-	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.0f, 0.0f, -5.0f), "camera 2");
+	std::shared_ptr<Camera> cam2 = std::make_shared<Camera>(aR, XMFLOAT3(0.0f, -3.6f, 19.0f), "camera 2");
 
 	cameras.push_back(camera);
 	cameras.push_back(cam2);
@@ -879,24 +885,26 @@ void Game::InitializeCamera()
 
 void Game::UpdateObjectTransformations(float deltaTime)
 {
-	// alter second triangle rotation every frame
-	DirectX::XMFLOAT3 triRot = entities[1]->GetTransform()->GetPitchYawRoll();
-	triRot.z += 1.0f * deltaTime;
-	entities[1]->GetTransform()->SetRotation(triRot);
-	// alter second triangle position every frame
-	DirectX::XMFLOAT3 triPos = entities[1]->GetTransform()->GetPosition();
-	triPos.x += 0.000002f;
-	entities[1]->GetTransform()->SetPosition(triPos);
+	//
+	// rotate the helix
+	XMFLOAT3 helRot = entities[3]->GetTransform()->GetPitchYawRoll();
+	helRot.z += 1.0f * deltaTime;
+	entities[3]->GetTransform()->SetRotation(helRot);
+	
+	// move cylinder up and down
+	XMFLOAT3 cylinderPos = entities[2]->GetTransform()->GetPosition();
+	if (goingUp) {
 
-	// alter second bunny scale every frame
-	DirectX::XMFLOAT3 bunSca = entities[4]->GetTransform()->GetScale();
-	bunSca.x += 0.00005f;
-	bunSca.y += 0.00001f;
-	entities[4]->GetTransform()->SetScale(bunSca);
-	// alter second bunny position every frame
-	DirectX::XMFLOAT3 bunPos = entities[4]->GetTransform()->GetPosition();
-	bunPos.y -= 0.00005f;
-	entities[4]->GetTransform()->SetPosition(bunPos);
+		if (cylinderPos.y >= 1.5f) goingUp = false;
+		cylinderPos.y += 0.5f * deltaTime;
+		entities[2]->GetTransform()->SetPosition(cylinderPos);
+
+	}
+	else {
+		if (cylinderPos.y <= -1.5f) goingUp = true;
+		cylinderPos.y -= 0.5f * deltaTime;
+		entities[2]->GetTransform()->SetPosition(cylinderPos);
+	}
 
 }
 
@@ -927,7 +935,7 @@ void Game::Update(float deltaTime, float totalTime)
 	GuiUpdate(deltaTime);
 	BuildGui();
 
-	//UpdateObjectTransformations(deltaTime);
+	UpdateObjectTransformations(deltaTime);
 
 	// update cameras
 	for (auto& c : cameras) c->Update(deltaTime);
@@ -955,9 +963,27 @@ void Game::Draw(float deltaTime, float totalTime)
  
 	}
 
+	// switch render target
+	//Graphics::Context->ClearRenderTargetView(shadowDepthMap.Get(), 0);
+	// turn off pixel shader
+	//Graphics::Context->PSSetShader(0, 0, 0);
+	// change viewport
+	// set shadow vertex shader
+	
+	//Graphics::Device->depth
+
+	// render sene entities to shadow maps from the light's point of view
+	// do once for each light that casts shadows
+
+
+	// switch render target
+	//Graphics::Context->PSSetShader()
+
 	// DRAW geometry
 	// - These steps are generally repeated for EACH object you draw
 	// - Other Direct3D calls will also be necessary to do more complex things
+	// assignment 12
+	// pass in shadow map, perform per pixel shadow calculations
 	for (auto& g : entities) {
 		g->GetMaterial()->GetPixelShader()->SetData(
 			"lights", 

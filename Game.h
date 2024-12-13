@@ -62,5 +62,16 @@ private:
 	std::shared_ptr<SimplePixelShader> normalsPS;
 	std::shared_ptr<SimplePixelShader> uvPS;
 	std::shared_ptr<SimplePixelShader> pseudoPS;
+
+	// shadow mapping
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> shadowDSV;
+	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> shadowSRV;
+	Microsoft::WRL::ComPtr<ID3D11RasterizerState> shadowRasterizer;
+	Microsoft::WRL::ComPtr<ID3D11SamplerState> shadowSampler;
+	DirectX::XMFLOAT4X4 lightViewMatrix;
+	DirectX::XMFLOAT4X4 lightProjectionMatrix;
+	//Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowDepthMap;
+	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowDepthMap;
+
 };
 

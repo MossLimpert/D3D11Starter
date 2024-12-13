@@ -25,7 +25,8 @@ struct Light
     float3 color;           // all need color
     float spotInnerAngle;   // inside this full light
     float spotOuterAngle;   // outside this no light
-    float2 padding;         // adding padding to hit the 16byte bound
+    int castsShadows;
+    float pad;
 	
 };
 
@@ -191,7 +192,7 @@ float3 MicroFacetBRDF(float3 n, float3 l, float3 v, float roughness, float3 spec
     
     // run numerator funcs
     float D = D_GGX(n, h, roughness);
-    float3 F = F_Schlick(v, h, F0_NON_METAL);
+    float3 F = F_Schlick(v, h, specColor);
     float G = G_SchlickGGX(n, v, roughness) * G_SchlickGGX(n, l, roughness);
     
     // pass F out of the function for diffuse balance?
@@ -221,12 +222,13 @@ float3 DirectionalLight(Light light, float3 normal, float3 worldPos, float3 camP
     // roughness into account for specular
     float diff = Diffuse(normal, toLight);
     float3 F;
-    float spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
+    float3 spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
     
     // calculate diffuse with energy conservation
     // reflected light does not get diffused
-    float3 balancedDiff = DiffuseEnergyConserve(diff, spec, metalness);
+    float3 balancedDiff = DiffuseEnergyConserve(diff, F, metalness);
     
+    //return balancedDiff;
     // combine
     return (balancedDiff * surfaceColor + spec) * light.intensity * light.color;
 
@@ -243,10 +245,10 @@ float3 PointLight(Light light, float3 normal, float3 worldPos, float3 camPos, fl
     float atten = Attenuate(light, worldPos);
     float diff = Diffuse(normal, toLight);
     float3 F;
-    float spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
+    float3 spec = MicroFacetBRDF(normal, toLight, toCam, roughness, specular, F);
     
     // diffuse with energy conservation - reflected light doesnt diffuse
-    float3 balancedDiff = DiffuseEnergyConserve(diff, specular, metalness);
+    float3 balancedDiff = DiffuseEnergyConserve(diff, F, metalness);
     
     // combine
     return (balancedDiff * surfaceColor + spec) * atten * light.intensity * light.color;

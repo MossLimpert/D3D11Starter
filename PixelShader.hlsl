@@ -68,7 +68,7 @@ float4 main(VertexToPixel input) : SV_TARGET
     // assignment 11
     // undoing gamma correction (added back on final line in main)
     float3 curColor = pow(Albedo.Sample(BasicSampler, input.uv).rgb, 2.2f);
-    curColor *= colorTint;
+    //curColor *= colorTint;
     
     
     // assignment 11
@@ -80,8 +80,9 @@ float4 main(VertexToPixel input) : SV_TARGET
     // so we lerp the specular color to match
     float3 specColor = lerp(F0_NON_METAL, curColor.rgb, metalness);
     
-    float3 totalLight = curColor;
+    float3 totalLight;
     
+
     // loop through lights and apply
     for (int i = 0; i < NUM_LIGHTS; i++)
     {
@@ -92,15 +93,17 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case LIGHT_TYPE_DIRECTIONAL:
-                totalLight += curColor * DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);
+
                 break;
             
+
             case LIGHT_TYPE_POINT:
-                totalLight += curColor * PointLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);
                 break;
             
             case LIGHT_TYPE_SPOT:
-                totalLight += curColor * SpotLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += SpotLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);
                 break;
         }
     }
