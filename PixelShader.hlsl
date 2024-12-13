@@ -92,15 +92,15 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case LIGHT_TYPE_DIRECTIONAL:
-                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += curColor * DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
                 break;
             
             case LIGHT_TYPE_POINT:
-                totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += curColor * PointLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
                 break;
             
             case LIGHT_TYPE_SPOT:
-                totalLight += SpotLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
+                totalLight += curColor * SpotLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, colorTint, specColor);
                 break;
         }
     }
