@@ -6,6 +6,8 @@ cbuffer ExternalData : register(b0)
     float4x4 view;
     float4x4 projection;
     float4x4 worldInvTranspose;
+    matrix shadowView;
+    matrix shadowProjection;
 }
 
 
@@ -40,18 +42,19 @@ VertexToPixel main( VertexShaderInput input )
 	// follow the steps we did with the normal, except with world instead of 
 	// world inverse transpose. 
     output.tangent = mul((float3x3) world, input.tangent);
-	
 	// pass uv and normal through ASSIGNMENT 7
     output.uv = input.uv;
-	
 	// normal
 	// duplicate transformation to the vertex by casting matrix to 3x3
 	// use the inverse transpose so we are using a uniform scale
     output.normal = mul((float3x3) worldInvTranspose, input.normal);
-	
 	// owrld pos
     output.worldPosition = mul(world, float4(input.localPosition, 1)).xyz;
 
+	// assignment 12
+    matrix shadowWVP = mul(shadowProjection, mul(shadowView, world));
+    output.shadowPos = mul(shadowWVP, float4(input.localPosition, 1.0f));
+	
 	// Whatever we return will make its way through the pipeline to the
 	// next programmable stage we're using (the pixel shader for now)
 	return output;

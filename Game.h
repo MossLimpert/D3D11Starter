@@ -72,6 +72,8 @@ private:
 	DirectX::XMFLOAT4X4 lightProjectionMatrix;
 	//Microsoft::WRL::ComPtr<ID3D11Texture2D> shadowDepthMap;
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> shadowDepthMap;
+	ShadowOptions shadowOptions;
+	std::shared_ptr<SimpleVertexShader> shadowVS;
 
 };
 

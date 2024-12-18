@@ -20,11 +20,14 @@ cbuffer ExternalData : register(b0)
 // FIELDS
 
 // assignment 11
-Texture2D Albedo : register(t0);
-Texture2D NormalMap : register(t1);
-Texture2D RoughnessMap : register(t2);
-Texture2D MetalnessMap : register(t3);      // t is registers for textures
-SamplerState BasicSampler   : register(s0); // s is registers for samplers
+Texture2D Albedo        : register(t0);
+Texture2D NormalMap     : register(t1);
+Texture2D RoughnessMap  : register(t2);
+Texture2D MetalnessMap  : register(t3);      // t is registers for textures
+Texture2D ShadowMap     : register(t4);
+
+SamplerState BasicSampler               : register(s0); // s is registers for samplers
+SamplerComparisonState ShadowSampler    : register(s1);
 
 // --------------------------------------------------------
 // The entry point (main method) for our pixel shader
@@ -63,13 +66,10 @@ float4 main(VertexToPixel input) : SV_TARGET
     float roughness = RoughnessMap.Sample(BasicSampler, input.uv).r;
     // metalness
     float metalness = MetalnessMap.Sample(BasicSampler, input.uv).r;
-    
     // get the texture color at given uv coords, apply tint and ambient
     // assignment 11
     // undoing gamma correction (added back on final line in main)
     float3 curColor = pow(Albedo.Sample(BasicSampler, input.uv).rgb, 2.2f);
-    //curColor *= colorTint;
-    
     
     // assignment 11
     // specular 
@@ -79,6 +79,15 @@ float4 main(VertexToPixel input) : SV_TARGET
     // but might be in between because of linear texture sampling, 
     // so we lerp the specular color to match
     float3 specColor = lerp(F0_NON_METAL, curColor.rgb, metalness);
+    
+    // assignment 12
+    // shadow for a single light
+    float2 shadowUV = input.shadowPos.xy / input.shadowPos.w * 0.5f + 0.5f;
+    shadowUV.y = 1.0f - shadowUV.y;
+    // depth from light
+    float depthFromLight = input.shadowPos.z / input.shadowPos.w;
+    // compare depth with shadow map value
+    float shadowAmount = ShadowMap.SampleCmpLevelZero(ShadowSampler, shadowUV, depthFromLight);
     
     float3 totalLight;
     
@@ -93,10 +102,12 @@ float4 main(VertexToPixel input) : SV_TARGET
         switch (lights[i].type)
         {
             case LIGHT_TYPE_DIRECTIONAL:
-                totalLight += DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);
-
+                float result = DirectionalLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);
+                
+                // apply dir light, scaled by shadow map val
+                // only correct for the one shadow map we have
+                totalLight += result * (light.castsShadows ? shadowAmount : 1.0f);
                 break;
-            
 
             case LIGHT_TYPE_POINT:
                 totalLight += PointLight(light, input.normal, input.worldPosition, camPos, roughness, metalness, curColor, specColor);

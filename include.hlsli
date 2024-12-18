@@ -42,6 +42,7 @@ struct VertexToPixel
     float3 worldPosition    : POSITION;
     float3 tangent          : TANGENT;
     float2 uv               : TEXCOORD;
+    float4 shadowPos        : SHADOWPOS;
 };
 
 // Struct representing a single vertex worth of data

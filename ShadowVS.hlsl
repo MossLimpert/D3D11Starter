@@ -7,7 +7,8 @@ cbuffer ExternalData : register(b0) {
 	matrix projection;
 }
 
-float4 main( float4 pos : POSITION ) : SV_POSITION
+float4 main( VertexShaderInput input ) : SV_POSITION
 {
-	return pos;
+    matrix wvp = mul(projection, mul(view, world));
+    return mul(wvp, float4(input.localPosition, 1.0f));
 }
